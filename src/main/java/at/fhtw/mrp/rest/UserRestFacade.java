@@ -1,11 +1,14 @@
 package at.fhtw.mrp.rest;
 
 import at.fhtw.mrp.dao.general.DataConflictException;
-import at.fhtw.mrp.dto.UserAuth;
+import at.fhtw.mrp.dto.UserAuthDTO;
+import at.fhtw.mrp.dto.UserProfileDTO;
+import at.fhtw.mrp.dto.UserProfileUpdateDTO;
 import at.fhtw.mrp.rest.http.ContentType;
 import at.fhtw.mrp.rest.http.HttpMethod;
 import at.fhtw.mrp.rest.http.HttpStatus;
 import at.fhtw.mrp.rest.server.PathParam;
+import at.fhtw.mrp.rest.server.QueryParam;
 import at.fhtw.mrp.rest.server.REST;
 import at.fhtw.mrp.rest.server.Response;
 import at.fhtw.mrp.service.AuthService;
@@ -28,7 +31,7 @@ public class UserRestFacade extends AbstractRestFacade {
     }
 
     @REST(path = "register", method = HttpMethod.POST, authRequired = false)
-    public Response registerUser(UserAuth user) {
+    public Response registerUser(UserAuthDTO user) {
         try {
             userService.createUser(user);
             return new Response(HttpStatus.CREATED, ContentType.PLAIN_TEXT, "Der Benutzer wurde erfolgreich registriert.");
@@ -39,17 +42,40 @@ public class UserRestFacade extends AbstractRestFacade {
     }
 
     @REST(path = "login", method = HttpMethod.POST, authRequired = false)
-    public Response loginUser(UserAuth user) {
+    public Response loginUser(UserAuthDTO user) {
         if (user == null || StringUtils.isBlank(user.password()) || StringUtils.isBlank(user.username())) {
             return new Response(HttpStatus.BAD_REQUEST, ContentType.PLAIN_TEXT, "Die Benutzerdaten sind unvollständig.");
         }
         String token = authService.loginUser(user);
         LOGGER.log(Level.FINE, "{} hat sich eingeloggt.", user.username());
-        return new Response(HttpStatus.CREATED, ContentType.PLAIN_TEXT, token);
+        return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, token);
     }
 
     @REST(path = "{id}/profile", method = HttpMethod.GET)
-    public Response getProfile(@PathParam("id") String id) {
-        return new Response(HttpStatus.CREATED, ContentType.PLAIN_TEXT, "Get Profile Successfully" + id);
+    public UserProfileDTO getProfile(@PathParam("id") Long userId) {
+        return userService.getUserProfile(userId);
+    }
+
+    @REST(path = "{id}/profile", method = HttpMethod.PUT)
+    public void updateProfile(@PathParam("id") Long userId, UserProfileUpdateDTO userProfile) {
+        userService.updateUserProfile(userId, userProfile);
+    }
+
+    @REST(path = "{id}/ratings", method = HttpMethod.GET)
+    public Response getRatings(@PathParam("id") Long userId) {
+        // TODO Implement
+        return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "Get Ratings Successfully " + userId);
+    }
+
+    @REST(path = "{id}/favorites", method = HttpMethod.GET)
+    public Response getFavorites(@PathParam("id") Long userId) {
+        // TODO Implement
+        return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "Get Ratings Successfully " + userId);
+    }
+
+    @REST(path = "{id}/recommendations", method = HttpMethod.GET)
+    public Response getRecommendations(@PathParam("id") Long userId, @QueryParam("type") String type) {
+        // TODO Implement
+        return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "Get Recommendations Successfully " + userId + " :: " + type);
     }
 }

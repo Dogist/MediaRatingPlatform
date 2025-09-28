@@ -3,31 +3,51 @@ package at.fhtw.mrp.dao;
 import at.fhtw.mrp.dao.general.ConnectionWrapper;
 import at.fhtw.mrp.dao.general.DataAccessException;
 import at.fhtw.mrp.dao.general.DataConflictException;
+import at.fhtw.mrp.dto.MediaEntryCreateDTO;
 import at.fhtw.mrp.dto.UserProfileUpdateDTO;
+import at.fhtw.mrp.entity.MediaEntryEntity;
 import at.fhtw.mrp.entity.UserEntity;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserDao {
+public class MediaEntryDao {
 
-    public void createUser(String username, String passwordHash) throws DataConflictException {
+    public MediaEntryEntity createMediaEntry(MediaEntryEntity mediaEntry) {
         try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement preparedStatement = cw.prepareStatement("INSERT INTO USER_ACC(USERNAME, PASSWORD) VALUES (?, ?)");
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, passwordHash);
+            PreparedStatement mainStatement = cw.prepareStatement("INSERT INTO media_entry(media_type, title, description, creator, release_year, age_restriction) VALUES (?, ?, ?, ?, ?, ?)");
+            mainStatement.setString(1, mediaEntry.getMediaType().name());
+            mainStatement.setString(2, mediaEntry.getTitle());
+            mainStatement.setString(3, mediaEntry.getDescription());
+            mainStatement.setLong(4, mediaEntry.getCreator().getId());
+            mainStatement.setInt(5, mediaEntry.getReleaseYear());
+            mainStatement.setInt(6, mediaEntry.getAgeRestriction());
 
-            preparedStatement.executeUpdate();
+            mainStatement.executeUpdate();
+            ResultSet generatedKeys = mainStatement.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                long mediaEntryId = generatedKeys.getLong(1);
 
-            cw.commitTransaction();
-        } catch (SQLException e) {
-            if (e.getSQLState().equals("23505")) {
-                throw new DataConflictException(e.getMessage());
-            } else {
-                throw new DataAccessException("Es gab einen Fehler beim Erstellen des Benutzers.", e);
+                if (!mediaEntry.getGenres().isEmpty()) {
+                    PreparedStatement childStatements = cw.prepareStatement("INSERT INTO media_entry_genres(media_entry_id, genre) VALUES(?, ?)");
+                    for (String genre : mediaEntry.getGenres()) {
+                        childStatements.setLong(1, mediaEntryId);
+                        childStatements.setString(2, genre);
+                        childStatements.addBatch();
+                    }
+                    childStatements.executeBatch();
+                }
+                cw.commitTransaction();
+                mediaEntry.setId(mediaEntryId);
+                return mediaEntry;
             }
+
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Es gab einen Fehler beim Erstellen des Benutzers.", e);
         }
+        return null;
     }
 
     public boolean checkUserAuth(String username, String passwordHash) {

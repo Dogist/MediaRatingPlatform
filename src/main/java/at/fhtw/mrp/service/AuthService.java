@@ -1,7 +1,7 @@
 package at.fhtw.mrp.service;
 
 import at.fhtw.mrp.dao.UserDao;
-import at.fhtw.mrp.dto.UserAuth;
+import at.fhtw.mrp.dto.UserAuthDTO;
 import at.fhtw.mrp.exceptions.InvalidInputException;
 
 import java.time.LocalDateTime;
@@ -32,12 +32,12 @@ public class AuthService {
     }
 
     /**
-     * MMethode welche versucht das übergebene {@link UserAuth} zu authentifizieren.
+     * MMethode welche versucht das übergebene {@link UserAuthDTO} zu authentifizieren.
      *
      * @param userAuth welcher authentifiziert wird.
      * @return String Bearer-Token, welcher für die Authentifizierung verwendet werden kann.
      */
-    public String loginUser(UserAuth userAuth) throws InvalidInputException {
+    public String loginUser(UserAuthDTO userAuth) throws InvalidInputException {
         // TODO Hash Password
         if (userDao.checkUserAuth(userAuth.username(), userAuth.password())) {
             synchronized (AuthService.class) {

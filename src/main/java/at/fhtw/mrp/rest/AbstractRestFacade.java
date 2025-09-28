@@ -50,7 +50,7 @@ public abstract class AbstractRestFacade implements HttpHandler {
             if (declaredMethod.isAnnotationPresent(REST.class)) {
                 REST restA = declaredMethod.getAnnotation(REST.class);
                 requestMappings.add(new RequestMapping(
-                        getBasePath() + "/" + restA.path(),
+                        StringUtils.stripEnd(getBasePath() + "/" + restA.path(), "/"),
                         restA.method(), declaredMethod,
                         restA.authRequired()));
             }
@@ -101,8 +101,7 @@ public abstract class AbstractRestFacade implements HttpHandler {
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Exception: ", e);
             exchange.sendResponseHeaders(HttpStatus.INTERNAL_SERVER_ERROR.code, 0);
-        }
-        finally {
+        } finally {
             UserSessionService.clearUserSession();
         }
     }
@@ -110,18 +109,28 @@ public abstract class AbstractRestFacade implements HttpHandler {
     private void handleResponse(HttpExchange exchange, Object returnVal) throws IOException {
         exchange.getResponseHeaders().add("Cache-Control", "nocache");
         if (returnVal != null) {
-            if (returnVal instanceof Response) {
-                exchange.getResponseHeaders().add("Content-Type", ((Response) returnVal).contentType());
-                byte[] responseBody = ((Response) returnVal).content().getBytes(StandardCharsets.UTF_8);
-                exchange.sendResponseHeaders(((Response) returnVal).status(), responseBody.length);
-                exchange.getResponseBody().write(responseBody);
+            if (returnVal instanceof Response(int status, String contentType, Object content)) {
+                if (content == null) {
+                    exchange.sendResponseHeaders(HttpStatus.NO_CONTENT.code, -1);
+                } else if (content instanceof String) {
+                    exchange.getResponseHeaders().add("Content-Type", contentType);
+                    byte[] responseBody = ((String) content).getBytes(StandardCharsets.UTF_8);
+                    exchange.sendResponseHeaders(status, responseBody.length);
+                    exchange.getResponseBody().write(responseBody);
+                } else if (contentType.equals(ContentType.JSON.type)) {
+                    exchange.getResponseHeaders().add("Content-Type", ContentType.JSON.type);
+                    exchange.sendResponseHeaders(status, 0);
+                    objectMapper.writeValue(exchange.getResponseBody(), content);
+                } else {
+                    throw new IllegalArgumentException("Diese Kombination von Response-Content und Content-Type wird nicht unterstützt!");
+                }
             } else {
                 exchange.getResponseHeaders().add("Content-Type", ContentType.JSON.type);
-                objectMapper.writeValue(exchange.getResponseBody(), returnVal);
                 exchange.sendResponseHeaders(HttpStatus.OK.code, 0);
+                objectMapper.writeValue(exchange.getResponseBody(), returnVal);
             }
         } else {
-            exchange.sendResponseHeaders(HttpStatus.NO_CONTENT.code, 0);
+            exchange.sendResponseHeaders(HttpStatus.NO_CONTENT.code, -1);
         }
     }
 
@@ -145,22 +154,28 @@ public abstract class AbstractRestFacade implements HttpHandler {
                 Matcher matcher = requestMapping.pattern().matcher(exchange.getRequestURI().getPath());
                 if (matcher.find()) {
                     String p = matcher.group(pathParamA.value());
-                    if (parameter.getType().isAssignableFrom(Integer.class)) {
+                    if (parameter.getType().isAssignableFrom(Long.class)) {
+                        params.add(Long.parseLong(p));
+                    } else if (parameter.getType().isAssignableFrom(Integer.class)) {
                         params.add(Integer.parseInt(p));
                     } else {
                         params.add(p);
                     }
                 }
             } else if (queryParamA != null) {
-                Matcher matcher = Pattern.compile("[?&]" + queryParamA.value() + "=([^&]*)")
+                Matcher matcher = Pattern.compile("(?:^|&)" + queryParamA.value() + "=([^&]*)")
                         .matcher(exchange.getRequestURI().getQuery());
                 if (matcher.find()) {
-                    String p = matcher.group();
-                    if (parameter.getType().isAssignableFrom(Integer.class)) {
+                    String p = matcher.group(1);
+                    if (parameter.getType().isAssignableFrom(Long.class)) {
+                        params.add(Long.parseLong(p));
+                    } else if (parameter.getType().isAssignableFrom(Integer.class)) {
                         params.add(Integer.parseInt(p));
                     } else {
                         params.add(p);
                     }
+                } else {
+                    params.add(null);
                 }
             } else {
                 params.add(null);

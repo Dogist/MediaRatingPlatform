@@ -6,6 +6,9 @@
 - Aufbau des REST-Frameworks
 - Erste DB-Verbindung
 
-### 28.09.2025 8:15-
+### 28.09.2025 8:15-12:00 = 3,75h
 
 - Authorization Logik mit Bearer-Token implementiert
+- User-Service Erweiterung
+- verschiedene Controller Fixes
+- MediaEntry-Service start

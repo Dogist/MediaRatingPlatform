@@ -6,13 +6,34 @@ import java.util.List;
 
 public class MediaEntryEntity {
     private Long id;
-    private MediaEntryType type;
+    private MediaEntryType mediaType;
     private String title;
     private String description;
     private Integer releaseYear;
     private List<String> genres;
-    private Integer minAge;
+    private Integer ageRestriction;
     private UserEntity creator;
+
+    public MediaEntryEntity(MediaEntryType mediaType, String title, String description, Integer releaseYear, List<String> genres, Integer ageRestriction, UserEntity creator) {
+        this.mediaType = mediaType;
+        this.title = title;
+        this.description = description;
+        this.releaseYear = releaseYear;
+        this.genres = genres;
+        this.ageRestriction = ageRestriction;
+        this.creator = creator;
+    }
+
+    public MediaEntryEntity(Long id, MediaEntryType mediaType, String title, String description, Integer releaseYear, List<String> genres, Integer ageRestriction, UserEntity creator) {
+        this.id = id;
+        this.mediaType = mediaType;
+        this.title = title;
+        this.description = description;
+        this.releaseYear = releaseYear;
+        this.genres = genres;
+        this.ageRestriction = ageRestriction;
+        this.creator = creator;
+    }
 
     public Long getId() {
         return id;
@@ -30,12 +51,12 @@ public class MediaEntryEntity {
         this.creator = creator;
     }
 
-    public Integer getMinAge() {
-        return minAge;
+    public Integer getAgeRestriction() {
+        return ageRestriction;
     }
 
-    public void setMinAge(Integer minAge) {
-        this.minAge = minAge;
+    public void setAgeRestriction(Integer ageRestriction) {
+        this.ageRestriction = ageRestriction;
     }
 
     public List<String> getGenres() {
@@ -70,11 +91,11 @@ public class MediaEntryEntity {
         this.title = title;
     }
 
-    public MediaEntryType getType() {
-        return type;
+    public MediaEntryType getMediaType() {
+        return mediaType;
     }
 
-    public void setType(MediaEntryType type) {
-        this.type = type;
+    public void setMediaType(MediaEntryType mediaType) {
+        this.mediaType = mediaType;
     }
 }

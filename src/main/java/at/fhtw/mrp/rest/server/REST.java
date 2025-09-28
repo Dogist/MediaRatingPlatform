@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface REST {
-    String path();
+    String path() default "";
 
     HttpMethod method();
 

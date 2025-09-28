@@ -10,7 +10,7 @@ public class UserSessionService {
     private static final ThreadLocal<UserEntity> userSession = new ThreadLocal<>();
 
     public static void registerUserSession(String username) {
-        UserEntity user = userDao.getUser(username);
+        UserEntity user = userDao.getUserByUsername(username);
         user.setPassword("");
         userSession.set(user);
     }

@@ -3,6 +3,7 @@ package at.fhtw.mrp.dao.general;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class ConnectionWrapper implements AutoCloseable {
 
@@ -48,10 +49,14 @@ public class ConnectionWrapper implements AutoCloseable {
         }
     }
 
+    /**
+     *
+     * @see Connection#prepareStatement(String)
+     */
     public PreparedStatement prepareStatement(String sql) {
         if (this.connection != null) {
             try {
-                return this.connection.prepareStatement(sql);
+                return this.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             } catch (SQLException e) {
                 throw new DataAccessException("Erstellen eines PreparedStatements nicht erfolgreich", e);
             }

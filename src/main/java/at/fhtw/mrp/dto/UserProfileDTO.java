@@ -1,28 +1,26 @@
-package at.fhtw.mrp.entity;
+package at.fhtw.mrp.dto;
 
-import at.fhtw.mrp.dto.UserProfileDTO;
+import at.fhtw.mrp.entity.UserEntity;
 
-public class UserEntity {
+public class UserProfileDTO {
     private Long id;
     private String username;
-    private String password;
     private String email;
     private String favoriteGenre;
 
-    public UserEntity() {
+    public UserProfileDTO() {
     }
 
-    public UserEntity(UserProfileDTO userProfileDTO) {
-        this.id = userProfileDTO.getId();
-        this.username = userProfileDTO.getUsername();
-        this.email = userProfileDTO.getEmail();
-        this.favoriteGenre = userProfileDTO.getFavoriteGenre();
+    public UserProfileDTO(UserEntity user) {
+        this.id = user.getId();
+        this.username = user.getUsername();
+        this.email = user.getEmail();
+        this.favoriteGenre = user.getFavoriteGenre();
     }
 
-    public UserEntity(Long id, String username, String password, String email, String favoriteGenre) {
+    public UserProfileDTO(Long id, String username, String email, String favoriteGenre) {
         this.id = id;
         this.username = username;
-        this.password = password;
         this.email = email;
         this.favoriteGenre = favoriteGenre;
     }
@@ -41,14 +39,6 @@ public class UserEntity {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getEmail() {

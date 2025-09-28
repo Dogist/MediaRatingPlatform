@@ -1,7 +1,6 @@
 package at.fhtw.mrp.rest.server;
 
-import at.fhtw.mrp.rest.AbstractRestFacade;
-import at.fhtw.mrp.rest.UserRestFacade;
+import at.fhtw.mrp.rest.*;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
@@ -15,6 +14,9 @@ public class Server {
 
         List<AbstractRestFacade> facades = new ArrayList<>();
         facades.add(new UserRestFacade());
+        facades.add(new MediaRestFacade());
+        facades.add(new RatingRestFacade());
+        facades.add(new LeaderboardRestFacade());
 
         facades.forEach(facade ->
                 server.createContext(facade.getBasePath(), facade));
