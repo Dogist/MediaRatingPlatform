@@ -8,3 +8,6 @@
 /dataSources.local.xml
 /misc.xml
 /vcs.xml
+/data_source_mapping.xml
+/dataSources.xml
+/sqldialects.xml
