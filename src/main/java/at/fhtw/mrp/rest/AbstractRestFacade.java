@@ -1,10 +1,12 @@
 package at.fhtw.mrp.rest;
 
+import at.fhtw.mrp.dto.Validateable;
+import at.fhtw.mrp.exceptions.BaseMRPException;
 import at.fhtw.mrp.rest.http.ContentType;
 import at.fhtw.mrp.rest.http.HttpStatus;
 import at.fhtw.mrp.rest.server.*;
-import at.fhtw.mrp.exceptions.InvalidInputException;
 import at.fhtw.mrp.service.AuthService;
+import at.fhtw.mrp.service.BearerAuthServiceImpl;
 import at.fhtw.mrp.service.UserSessionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -41,7 +43,7 @@ public abstract class AbstractRestFacade implements HttpHandler {
     private final String basePath;
 
     public AbstractRestFacade(String basePath) {
-        authService = new AuthService();
+        authService = new BearerAuthServiceImpl();
         this.objectMapper = new ObjectMapper();
         this.requestMappings = new ArrayList<>();
         this.basePath = "/api/" + basePath;
@@ -80,14 +82,22 @@ public abstract class AbstractRestFacade implements HttpHandler {
                         }
                     }
 
-                    List<Object> params = handleParameters(exchange, requestMapping);
                     try {
+                        List<Object> params = handleParameters(exchange, requestMapping);
+
                         Object returnVal = requestMapping.method().invoke(this, params.toArray());
                         handleResponse(exchange, returnVal);
                         responseHandled = true;
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        if (e.getCause() instanceof InvalidInputException) {
-                            handleResponse(exchange, new Response(HttpStatus.BAD_REQUEST, ContentType.PLAIN_TEXT, e.getCause().getMessage()));
+                    } catch (IllegalAccessException | InvocationTargetException | BaseMRPException e) {
+                        BaseMRPException customException = null;
+                        if (e instanceof BaseMRPException) {
+                            customException = (BaseMRPException) e;
+                        } else if (e.getCause() instanceof BaseMRPException) {
+                            customException = (BaseMRPException) e.getCause();
+                        }
+
+                        if (customException != null) {
+                            handleResponse(exchange, new Response(customException.getStatus(), ContentType.PLAIN_TEXT, customException.getMessage()));
                             responseHandled = true;
                         } else {
                             throw new RuntimeException("Es gab einen Fehler!", e);
@@ -145,7 +155,11 @@ public abstract class AbstractRestFacade implements HttpHandler {
                 try (BufferedReader br = new BufferedReader(new InputStreamReader(exchange.getRequestBody()))) {
                     String bodyString = br.lines().collect(Collectors.joining());
                     if (!bodyString.isEmpty()) {
-                        params.add(objectMapper.readValue(bodyString, parameter.getType()));
+                        Object o = objectMapper.readValue(bodyString, parameter.getType());
+                        if (o instanceof Validateable) {
+                            ((Validateable) o).validate();
+                        }
+                        params.add(o);
                     } else {
                         params.add(null);
                     }

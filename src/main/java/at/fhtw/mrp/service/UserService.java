@@ -7,13 +7,12 @@ import at.fhtw.mrp.dto.UserProfileDTO;
 import at.fhtw.mrp.dto.UserProfileUpdateDTO;
 import at.fhtw.mrp.entity.UserEntity;
 import at.fhtw.mrp.exceptions.InvalidInputException;
-import org.apache.commons.lang3.StringUtils;
 
 public class UserService {
     private final UserDao userDao = new UserDao();
 
     public void createUser(UserAuthDTO user) throws DataConflictException {
-        if (user == null || StringUtils.isBlank(user.password()) || StringUtils.isBlank(user.username())) {
+        if (user == null) {
             throw new InvalidInputException("Die Benutzerdaten sind unvollständig.");
         }
         // TODO Hash Password

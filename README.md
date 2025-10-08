@@ -12,3 +12,8 @@
 - User-Service Erweiterung
 - verschiedene Controller Fixes
 - MediaEntry-Service start
+
+### 08.10.2025 16:15-18:15 = 2h
+
+- MediaEntry Erweiterungen
+- Exception und DTO Refactoring

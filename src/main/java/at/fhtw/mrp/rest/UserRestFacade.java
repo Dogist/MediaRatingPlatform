@@ -12,8 +12,8 @@ import at.fhtw.mrp.rest.server.QueryParam;
 import at.fhtw.mrp.rest.server.REST;
 import at.fhtw.mrp.rest.server.Response;
 import at.fhtw.mrp.service.AuthService;
+import at.fhtw.mrp.service.BearerAuthServiceImpl;
 import at.fhtw.mrp.service.UserService;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,7 +27,7 @@ public class UserRestFacade extends AbstractRestFacade {
     public UserRestFacade() {
         super("users");
         userService = new UserService();
-        authService = new AuthService();
+        authService = new BearerAuthServiceImpl();
     }
 
     @REST(path = "register", method = HttpMethod.POST, authRequired = false)
@@ -35,7 +35,6 @@ public class UserRestFacade extends AbstractRestFacade {
         try {
             userService.createUser(user);
             return new Response(HttpStatus.CREATED, ContentType.PLAIN_TEXT, "Der Benutzer wurde erfolgreich registriert.");
-
         } catch (DataConflictException e) {
             return new Response(HttpStatus.CONFLICT, ContentType.PLAIN_TEXT, "Dieser Benutzer existiert bereits.");
         }
@@ -43,9 +42,6 @@ public class UserRestFacade extends AbstractRestFacade {
 
     @REST(path = "login", method = HttpMethod.POST, authRequired = false)
     public Response loginUser(UserAuthDTO user) {
-        if (user == null || StringUtils.isBlank(user.password()) || StringUtils.isBlank(user.username())) {
-            return new Response(HttpStatus.BAD_REQUEST, ContentType.PLAIN_TEXT, "Die Benutzerdaten sind unvollständig.");
-        }
         String token = authService.loginUser(user);
         LOGGER.log(Level.FINE, "{} hat sich eingeloggt.", user.username());
         return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, token);

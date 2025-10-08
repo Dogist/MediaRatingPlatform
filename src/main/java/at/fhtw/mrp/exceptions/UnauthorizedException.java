@@ -2,13 +2,14 @@ package at.fhtw.mrp.exceptions;
 
 import at.fhtw.mrp.rest.http.HttpStatus;
 
-public class InvalidInputException extends BaseMRPException {
+public class UnauthorizedException extends BaseMRPException {
     @Override
     public HttpStatus getStatus() {
-        return HttpStatus.BAD_REQUEST;
+        return HttpStatus.UNAUTHORIZED;
     }
 
-    public InvalidInputException(String message) {
+    public UnauthorizedException(String message) {
         super(message);
     }
+
 }

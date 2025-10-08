@@ -2,6 +2,8 @@ package at.fhtw.mrp.entity;
 
 import at.fhtw.mrp.dto.UserProfileDTO;
 
+import java.util.Objects;
+
 public class UserEntity {
     private Long id;
     private String username;
@@ -65,5 +67,17 @@ public class UserEntity {
 
     public void setFavoriteGenre(String favoriteGenre) {
         this.favoriteGenre = favoriteGenre;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(email, that.email) && Objects.equals(favoriteGenre, that.favoriteGenre);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, password, email, favoriteGenre);
     }
 }

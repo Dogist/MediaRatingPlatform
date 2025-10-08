@@ -1,9 +1,6 @@
 package at.fhtw.mrp.dao.general;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class ConnectionWrapper implements AutoCloseable {
 
@@ -47,6 +44,14 @@ public class ConnectionWrapper implements AutoCloseable {
                 throw new DataAccessException("Schließen der Connection nicht erfolgreich", e);
             }
         }
+    }
+
+    /**
+     *
+     * @see Connection#createArrayOf(String, Object[])
+     */
+    public Array createStringArray(String[] elements) throws SQLException {
+        return connection.createArrayOf("TEXT", elements);
     }
 
     /**

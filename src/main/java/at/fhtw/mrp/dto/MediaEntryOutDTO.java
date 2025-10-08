@@ -4,7 +4,7 @@ import at.fhtw.mrp.entity.MediaEntryEntity;
 
 import java.util.List;
 
-public class MediaEntryDTO {
+public class MediaEntryOutDTO {
     private Long id;
     private String mediaType;
     private String title;
@@ -14,11 +14,12 @@ public class MediaEntryDTO {
     private Integer ageRestriction;
     private String creator;
 
-    public MediaEntryDTO() {
+    public MediaEntryOutDTO() {
     }
 
-    public MediaEntryDTO(MediaEntryEntity mediaEntry) {
+    public MediaEntryOutDTO(MediaEntryEntity mediaEntry) {
         this.id = mediaEntry.getId();
+        this.mediaType = mediaEntry.getMediaType().name();
         this.title = mediaEntry.getTitle();
         this.description = mediaEntry.getDescription();
         this.releaseYear = mediaEntry.getReleaseYear();
