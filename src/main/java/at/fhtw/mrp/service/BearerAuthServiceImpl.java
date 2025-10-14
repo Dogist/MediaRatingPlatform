@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * Service für die Authentifizierung des Users.
- * TODO wegen Synchronität prüfen.
+ * TODO wegen Synchronität prüfen. Semaphores?
  */
 public class BearerAuthServiceImpl implements AuthService {
     /**

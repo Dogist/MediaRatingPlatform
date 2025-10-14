@@ -9,6 +9,8 @@ import at.fhtw.mrp.entity.UserEntity;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDao {
 
@@ -88,6 +90,30 @@ public class UserDao {
         }
     }
 
+    public List<UserEntity> getUserByFavoriteMedia(long mediaEntryId) {
+        try (ConnectionWrapper cw = new ConnectionWrapper()) {
+            PreparedStatement preparedStatement = cw.prepareStatement("SELECT USER_ACC.* FROM USER_ACC JOIN public.user_favorite_media ufm on USER_ACC.user_id = ufm.user_id WHERE ufm.media_entry_id = ?");
+            preparedStatement.setLong(1, mediaEntryId);
+
+            return mapUserList(preparedStatement);
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Es gab einen Fehler beim Holen des Benutzers.", e);
+        }
+    }
+
+    public List<UserEntity> getUserByLikedRating(long ratingId) {
+        try (ConnectionWrapper cw = new ConnectionWrapper()) {
+            PreparedStatement preparedStatement = cw.prepareStatement("SELECT USER_ACC.* FROM USER_ACC JOIN public.user_like_rating ufr on USER_ACC.user_id = ufr.user_id WHERE ufr.rating_id = ?");
+            preparedStatement.setLong(1, ratingId);
+
+            return mapUserList(preparedStatement);
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Es gab einen Fehler beim Holen des Benutzers.", e);
+        }
+    }
+
     public boolean updateUser(Long userId, UserProfileUpdateDTO userEntity) {
         try (ConnectionWrapper cw = new ConnectionWrapper()) {
             PreparedStatement preparedStatement = cw.prepareStatement("UPDATE USER_ACC SET email = ?, favorite_genre = ? WHERE USER_ID = ?");
@@ -103,5 +129,19 @@ public class UserDao {
         } catch (SQLException e) {
             throw new DataAccessException("Es gab einen Fehler beim Updaten des Benutzers.", e);
         }
+    }
+
+    private static List<UserEntity> mapUserList(PreparedStatement preparedStatement) throws SQLException {
+        List<UserEntity> users = new ArrayList<>();
+        ResultSet rs = preparedStatement.executeQuery();
+        while (rs.next()) {
+            users.add(new UserEntity(rs.getLong("USER_ID"),
+                    rs.getString("USERNAME"),
+                    "",
+                    rs.getString("EMAIL"),
+                    rs.getString("FAVORITE_GENRE")
+            ));
+        }
+        return users;
     }
 }

@@ -13,6 +13,7 @@ public class MediaEntryEntity {
     private List<String> genres;
     private Integer ageRestriction;
     private UserEntity creator;
+    private List<UserEntity> usersFavorited;
 
     public MediaEntryEntity(MediaEntryType mediaType, String title, String description, Integer releaseYear, List<String> genres, Integer ageRestriction, UserEntity creator) {
         this.mediaType = mediaType;
@@ -24,7 +25,7 @@ public class MediaEntryEntity {
         this.creator = creator;
     }
 
-    public MediaEntryEntity(Long id, MediaEntryType mediaType, String title, String description, Integer releaseYear, List<String> genres, Integer ageRestriction, UserEntity creator) {
+    public MediaEntryEntity(Long id, MediaEntryType mediaType, String title, String description, Integer releaseYear, List<String> genres, Integer ageRestriction, UserEntity creator, List<UserEntity> usersFavorited) {
         this.id = id;
         this.mediaType = mediaType;
         this.title = title;
@@ -33,6 +34,7 @@ public class MediaEntryEntity {
         this.genres = genres;
         this.ageRestriction = ageRestriction;
         this.creator = creator;
+        this.usersFavorited = usersFavorited;
     }
 
     public Long getId() {
@@ -97,5 +99,13 @@ public class MediaEntryEntity {
 
     public void setMediaType(MediaEntryType mediaType) {
         this.mediaType = mediaType;
+    }
+
+    public List<UserEntity> getUsersFavorited() {
+        return usersFavorited;
+    }
+
+    public void setUsersFavorited(List<UserEntity> usersFavorited) {
+        this.usersFavorited = usersFavorited;
     }
 }

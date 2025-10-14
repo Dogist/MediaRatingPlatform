@@ -17,3 +17,9 @@
 
 - MediaEntry Erweiterungen
 - Exception und DTO Refactoring
+
+### 14.10.2025 ca. 3h
+
+- Rating Allgemein
+- MediaEntry Favorite
+- Validation Verbesserungen

@@ -44,6 +44,7 @@ public abstract class AbstractRestFacade implements HttpHandler {
 
     public AbstractRestFacade(String basePath) {
         authService = new BearerAuthServiceImpl();
+        // TODO diesen auf einen Service auslagern
         this.objectMapper = new ObjectMapper();
         this.requestMappings = new ArrayList<>();
         this.basePath = "/api/" + basePath;
@@ -88,6 +89,7 @@ public abstract class AbstractRestFacade implements HttpHandler {
                         Object returnVal = requestMapping.method().invoke(this, params.toArray());
                         handleResponse(exchange, returnVal);
                         responseHandled = true;
+                        break;
                     } catch (IllegalAccessException | InvocationTargetException | BaseMRPException e) {
                         BaseMRPException customException = null;
                         if (e instanceof BaseMRPException) {
@@ -99,6 +101,7 @@ public abstract class AbstractRestFacade implements HttpHandler {
                         if (customException != null) {
                             handleResponse(exchange, new Response(customException.getStatus(), ContentType.PLAIN_TEXT, customException.getMessage()));
                             responseHandled = true;
+                            break;
                         } else {
                             throw new RuntimeException("Es gab einen Fehler!", e);
                         }

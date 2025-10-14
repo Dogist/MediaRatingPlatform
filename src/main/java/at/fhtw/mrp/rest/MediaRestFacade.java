@@ -2,6 +2,8 @@ package at.fhtw.mrp.rest;
 
 import at.fhtw.mrp.dto.MediaEntryInDTO;
 import at.fhtw.mrp.dto.MediaEntryOutDTO;
+import at.fhtw.mrp.dto.RatingInDTO;
+import at.fhtw.mrp.dto.RatingOutDTO;
 import at.fhtw.mrp.rest.http.ContentType;
 import at.fhtw.mrp.rest.http.HttpMethod;
 import at.fhtw.mrp.rest.http.HttpStatus;
@@ -10,17 +12,19 @@ import at.fhtw.mrp.rest.server.QueryParam;
 import at.fhtw.mrp.rest.server.REST;
 import at.fhtw.mrp.rest.server.Response;
 import at.fhtw.mrp.service.MediaService;
+import at.fhtw.mrp.service.RatingService;
 
 import java.util.List;
 
-// TODO Implement
 public class MediaRestFacade extends AbstractRestFacade {
 
     private final MediaService mediaService;
+    private final RatingService ratingService;
 
     public MediaRestFacade() {
         super("media");
         mediaService = new MediaService();
+        ratingService = new RatingService();
     }
 
     @REST(method = HttpMethod.GET)
@@ -56,20 +60,17 @@ public class MediaRestFacade extends AbstractRestFacade {
     }
 
     @REST(path = "{id}/rate", method = HttpMethod.POST)
-    public Response rateMediaEntry(@PathParam("id") Long mediaId) {
-        // TODO Implement
-        return null;
+    public RatingOutDTO rateMediaEntry(@PathParam("id") Long mediaId, RatingInDTO rating) {
+        return ratingService.createRating(mediaId, rating);
     }
 
     @REST(path = "{id}/favorite", method = HttpMethod.POST)
-    public Response favoriteMediaEntry(@PathParam("id") Long mediaId) {
-        // TODO Implement
-        return null;
+    public void favoriteMediaEntry(@PathParam("id") Long mediaId) {
+        mediaService.favoriteMediaEntry(mediaId);
     }
 
     @REST(path = "{id}/favorite", method = HttpMethod.DELETE)
-    public Response unfavoriteMediaEntry(@PathParam("id") Long mediaId) {
-        // TODO Implement
-        return null;
+    public void unfavoriteMediaEntry(@PathParam("id") Long mediaId) {
+        mediaService.unfavoriteMediaEntry(mediaId);
     }
 }

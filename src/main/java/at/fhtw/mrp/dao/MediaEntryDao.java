@@ -106,11 +106,12 @@ public class MediaEntryDao {
     }
 
 
-    public MediaEntryEntity getMediaEntry(Long mediaEntryId) {
+    public MediaEntryEntity getMediaEntry(Long mediaEntryId, Long currentUserId) {
         try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement preparedStatement = cw.prepareStatement("SELECT * FROM media_entry WHERE media_entry_id = ?");
-            // TODO Select erweitern für Rating
-            preparedStatement.setLong(1, mediaEntryId);
+            PreparedStatement preparedStatement = cw.prepareStatement("SELECT media_entry.*, exists(SELECT * FROM user_favorite_media WHERE user_id = ? AND user_favorite_media.media_entry_id = media_entry.media_entry_id) as favorite " +
+                    "FROM media_entry WHERE media_entry.media_entry_id = ?");
+            preparedStatement.setLong(1, currentUserId);
+            preparedStatement.setLong(2, mediaEntryId);
 
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
@@ -119,26 +120,27 @@ public class MediaEntryDao {
             return null;
 
         } catch (SQLException e) {
-            throw new DataAccessException("Es gab einen Fehler beim Holen des Benutzers.", e);
+            throw new DataAccessException("Es gab einen Fehler beim Holen des MediaEntry.", e);
         }
     }
 
+
     public void updateMediaEntry(MediaEntryEntity mediaEntry) {
         try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement mainStatement = cw.prepareStatement("UPDATE media_entry SET media_type = ?, title = ?, description = ?, release_year = ?, genres = ?, age_restriction = ? WHERE media_entry_id = ?");
-            mainStatement.setString(1, mediaEntry.getMediaType().name());
-            mainStatement.setString(2, mediaEntry.getTitle());
-            mainStatement.setString(3, mediaEntry.getDescription());
-            mainStatement.setInt(4, mediaEntry.getReleaseYear());
-            mainStatement.setArray(5,
+            PreparedStatement statement = cw.prepareStatement("UPDATE media_entry SET media_type = ?, title = ?, description = ?, release_year = ?, genres = ?, age_restriction = ? WHERE media_entry_id = ?");
+            statement.setString(1, mediaEntry.getMediaType().name());
+            statement.setString(2, mediaEntry.getTitle());
+            statement.setString(3, mediaEntry.getDescription());
+            statement.setInt(4, mediaEntry.getReleaseYear());
+            statement.setArray(5,
                     cw.createStringArray(mediaEntry.getGenres()
                             .stream()
                             .map(String::toLowerCase)
                             .toArray(String[]::new)));
-            mainStatement.setInt(6, mediaEntry.getAgeRestriction());
-            mainStatement.setLong(7, mediaEntry.getId());
+            statement.setInt(6, mediaEntry.getAgeRestriction());
+            statement.setLong(7, mediaEntry.getId());
 
-            mainStatement.executeUpdate();
+            statement.executeUpdate();
             cw.commitTransaction();
 
         } catch (SQLException e) {
@@ -148,10 +150,10 @@ public class MediaEntryDao {
 
     public boolean deleteMediaEntry(long mediaEntryId) {
         try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement mainStatement = cw.prepareStatement("DELETE FROM media_entry WHERE media_entry_id = ?");
-            mainStatement.setLong(1, mediaEntryId);
+            PreparedStatement statement = cw.prepareStatement("DELETE FROM media_entry WHERE media_entry_id = ?");
+            statement.setLong(1, mediaEntryId);
 
-            int i = mainStatement.executeUpdate();
+            int i = statement.executeUpdate();
             cw.commitTransaction();
             return i > 0;
         } catch (SQLException e) {
@@ -167,9 +169,35 @@ public class MediaEntryDao {
                 rs.getInt("release_year"),
                 Arrays.asList((String[]) rs.getArray("genres").getArray()),
                 rs.getInt("age_restriction"),
-                userDao.getUserById(rs.getLong("creator"))
+                userDao.getUserById(rs.getLong("creator")),
+                userDao.getUserByFavoriteMedia(rs.getLong("media_entry_id"))
         );
     }
 
+    public void setMediaEntryFavorite(Long mediaEntryId, Long userEntityId) {
+        try (ConnectionWrapper cw = new ConnectionWrapper()) {
+            PreparedStatement statement = cw.prepareStatement("INSERT INTO user_favorite_media(media_entry_id, user_id) VALUES (?, ?)");
+            statement.setLong(1, mediaEntryId);
+            statement.setLong(2, userEntityId);
 
+            statement.executeUpdate();
+            cw.commitTransaction();
+        } catch (SQLException e) {
+            throw new DataAccessException("Es gab einen Fehler beim Favorisieren des MediaEntry.", e);
+        }
+    }
+
+    public boolean removeMediaEntryFavorite(Long mediaEntryId, Long userEntityId) {
+        try (ConnectionWrapper cw = new ConnectionWrapper()) {
+            PreparedStatement statement = cw.prepareStatement("DELETE FROM user_favorite_media WHERE media_entry_id = ? AND user_id = ?");
+            statement.setLong(1, mediaEntryId);
+            statement.setLong(2, userEntityId);
+
+            int i = statement.executeUpdate();
+            cw.commitTransaction();
+            return i > 0;
+        } catch (SQLException e) {
+            throw new DataAccessException("Es gab einen Fehler beim Unfavorisieren des MediaEntry.", e);
+        }
+    }
 }
