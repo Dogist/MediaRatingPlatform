@@ -13,6 +13,7 @@ public class MediaEntryOutDTO {
     private List<String> genres;
     private Integer ageRestriction;
     private String creator;
+    private Double score;
 
     public MediaEntryOutDTO() {
     }
@@ -26,6 +27,7 @@ public class MediaEntryOutDTO {
         this.genres = mediaEntry.getGenres();
         this.ageRestriction = mediaEntry.getAgeRestriction();
         this.creator = mediaEntry.getCreator().getUsername();
+        this.score = mediaEntry.getAverageRating();
     }
 
     public Long getId() {
@@ -90,5 +92,9 @@ public class MediaEntryOutDTO {
 
     public void setCreator(String creator) {
         this.creator = creator;
+    }
+
+    public Double getScore() {
+        return score;
     }
 }

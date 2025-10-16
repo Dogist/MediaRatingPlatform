@@ -1,6 +1,7 @@
 package at.fhtw.mrp.service;
 
 import at.fhtw.mrp.dao.MediaEntryDao;
+import at.fhtw.mrp.dao.MediaEntryDaoImpl;
 import at.fhtw.mrp.dto.MediaEntryInDTO;
 import at.fhtw.mrp.dto.MediaEntryOutDTO;
 import at.fhtw.mrp.dto.MediaEntryType;
@@ -16,7 +17,7 @@ import java.util.Objects;
 
 public class MediaService {
 
-    private final MediaEntryDao mediaEntryDao = new MediaEntryDao();
+    private final MediaEntryDao mediaEntryDao = CDI.INSTANCE.getService(MediaEntryDao.class);
 
     public List<MediaEntryOutDTO> searchMediaEntries(String title,
                                                      String genre,
@@ -43,10 +44,9 @@ public class MediaService {
     public MediaEntryOutDTO getMediaEntry(Long mediaEntryId) {
         ValidationUtil.validateEntityId(mediaEntryId, "MediaEntry");
 
-        UserEntity currentUser = UserSessionService.getUserSession();
-        MediaEntryEntity mediaEntryEntity = mediaEntryDao.getMediaEntry(mediaEntryId, currentUser.getId());
+        MediaEntryEntity mediaEntryEntity = mediaEntryDao.getMediaEntry(mediaEntryId);
 
-        if(mediaEntryEntity == null) {
+        if (mediaEntryEntity == null) {
             throw new NotFoundException("Dieser MediaEntry kann nicht gefunden werden.");
         }
 
@@ -77,22 +77,7 @@ public class MediaService {
         mediaEntryEntity.setGenres(mediaEntry.genres());
         mediaEntryEntity.setAgeRestriction(mediaEntry.ageRestriction());
 
-
         mediaEntryDao.updateMediaEntry(mediaEntryEntity);
-    }
-
-    private MediaEntryEntity getMediaEntryEntityAndValidateUser(Long mediaEntryId) {
-        ValidationUtil.validateEntityId(mediaEntryId, "MediaEntry");
-
-        UserEntity currentUser = UserSessionService.getUserSession();
-        MediaEntryEntity mediaEntryEntity = mediaEntryDao.getMediaEntry(mediaEntryId, currentUser.getId());
-        if (mediaEntryEntity == null) {
-            throw new NotFoundException("Dieser MediaEntry existiert nicht.");
-        }
-        if (!Objects.equals(mediaEntryEntity.getCreator(), currentUser)) {
-            throw new UnauthorizedException("Der aktuelle Benutzer darf diesen MediaEntry nicht löschen.");
-        }
-        return mediaEntryEntity;
     }
 
     public void deleteMediaEntry(Long mediaEntryId) {
@@ -105,7 +90,7 @@ public class MediaService {
         ValidationUtil.validateEntityId(mediaEntryId, "MediaEntry");
 
         UserEntity currentUser = UserSessionService.getUserSession();
-        MediaEntryEntity mediaEntry = mediaEntryDao.getMediaEntry(mediaEntryId, currentUser.getId());
+        MediaEntryEntity mediaEntry = mediaEntryDao.getMediaEntry(mediaEntryId);
         if (mediaEntry == null) {
             throw new NotFoundException("Dieser MediaEntry existiert nicht.");
         } else if (mediaEntry.getUsersFavorited().contains(currentUser)) {
@@ -119,7 +104,7 @@ public class MediaService {
         ValidationUtil.validateEntityId(mediaEntryId, "MediaEntry");
 
         UserEntity currentUser = UserSessionService.getUserSession();
-        MediaEntryEntity mediaEntry = mediaEntryDao.getMediaEntry(mediaEntryId, currentUser.getId());
+        MediaEntryEntity mediaEntry = mediaEntryDao.getMediaEntry(mediaEntryId);
         if (mediaEntry == null) {
             throw new NotFoundException("Dieser MediaEntry existiert nicht.");
         } else if (!mediaEntry.getUsersFavorited().contains(currentUser)) {
@@ -127,5 +112,28 @@ public class MediaService {
         }
 
         mediaEntryDao.removeMediaEntryFavorite(mediaEntry.getId(), currentUser.getId());
+    }
+
+    private MediaEntryEntity getMediaEntryEntityAndValidateUser(Long mediaEntryId) {
+        ValidationUtil.validateEntityId(mediaEntryId, "MediaEntry");
+
+        UserEntity currentUser = UserSessionService.getUserSession();
+        MediaEntryEntity mediaEntryEntity = mediaEntryDao.getMediaEntry(mediaEntryId);
+        if (mediaEntryEntity == null) {
+            throw new NotFoundException("Dieser MediaEntry existiert nicht.");
+        }
+        if (!Objects.equals(mediaEntryEntity.getCreator(), currentUser)) {
+            throw new UnauthorizedException("Der aktuelle Benutzer darf diesen MediaEntry nicht löschen.");
+        }
+        return mediaEntryEntity;
+    }
+
+    public List<MediaEntryOutDTO> getMediaEntriesFavoritedByUser(Long userId) {
+        ValidationUtil.validateEntityId(userId, "User");
+
+        return mediaEntryDao.getMediaEntriesFavoritedByUser(userId)
+                .stream()
+                .map(MediaEntryOutDTO::new)
+                .toList();
     }
 }

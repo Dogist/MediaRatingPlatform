@@ -6,7 +6,7 @@ import at.fhtw.mrp.rest.http.ContentType;
 import at.fhtw.mrp.rest.http.HttpStatus;
 import at.fhtw.mrp.rest.server.*;
 import at.fhtw.mrp.service.AuthService;
-import at.fhtw.mrp.service.BearerAuthServiceImpl;
+import at.fhtw.mrp.service.CDI;
 import at.fhtw.mrp.service.UserSessionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -43,8 +43,7 @@ public abstract class AbstractRestFacade implements HttpHandler {
     private final String basePath;
 
     public AbstractRestFacade(String basePath) {
-        authService = new BearerAuthServiceImpl();
-        // TODO diesen auf einen Service auslagern
+        authService = CDI.INSTANCE.getService(AuthService.class);
         this.objectMapper = new ObjectMapper();
         this.requestMappings = new ArrayList<>();
         this.basePath = "/api/" + basePath;
@@ -70,7 +69,6 @@ public abstract class AbstractRestFacade implements HttpHandler {
                     if (ENABLE_AUTHENTICATION && requestMapping.isAuthRequired()) {
                         String authorization = exchange.getRequestHeaders().getFirst("Authorization");
                         String loggedInUser = null;
-                        // TODO auch Basic Auth?
                         if (authorization != null && authorization.startsWith("Bearer ")) {
                             String token = StringUtils.substringAfter(authorization, "Bearer ");
                             loggedInUser = authService.checkAuthToken(token);

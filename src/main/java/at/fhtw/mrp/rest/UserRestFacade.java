@@ -1,9 +1,7 @@
 package at.fhtw.mrp.rest;
 
 import at.fhtw.mrp.dao.general.DataConflictException;
-import at.fhtw.mrp.dto.UserAuthDTO;
-import at.fhtw.mrp.dto.UserProfileDTO;
-import at.fhtw.mrp.dto.UserProfileUpdateDTO;
+import at.fhtw.mrp.dto.*;
 import at.fhtw.mrp.rest.http.ContentType;
 import at.fhtw.mrp.rest.http.HttpMethod;
 import at.fhtw.mrp.rest.http.HttpStatus;
@@ -11,10 +9,9 @@ import at.fhtw.mrp.rest.server.PathParam;
 import at.fhtw.mrp.rest.server.QueryParam;
 import at.fhtw.mrp.rest.server.REST;
 import at.fhtw.mrp.rest.server.Response;
-import at.fhtw.mrp.service.AuthService;
-import at.fhtw.mrp.service.BearerAuthServiceImpl;
-import at.fhtw.mrp.service.UserService;
+import at.fhtw.mrp.service.*;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,12 +19,16 @@ public class UserRestFacade extends AbstractRestFacade {
 
     public static final Logger LOGGER = Logger.getLogger(UserRestFacade.class.getSimpleName());
     private final UserService userService;
+    private final MediaService mediaService;
+    private final RatingService ratingService;
     private final AuthService authService;
 
     public UserRestFacade() {
         super("users");
         userService = new UserService();
-        authService = new BearerAuthServiceImpl();
+        mediaService = new MediaService();
+        ratingService = new RatingService();
+        authService = CDI.INSTANCE.getService(AuthService.class);
     }
 
     @REST(path = "register", method = HttpMethod.POST, authRequired = false)
@@ -58,15 +59,13 @@ public class UserRestFacade extends AbstractRestFacade {
     }
 
     @REST(path = "{id}/ratings", method = HttpMethod.GET)
-    public Response getRatings(@PathParam("id") Long userId) {
-        // TODO Implement
-        return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "Get Ratings Successfully " + userId);
+    public List<RatingOutDTO> getRatings(@PathParam("id") Long userId) {
+        return ratingService.getRatingsForUser(userId);
     }
 
     @REST(path = "{id}/favorites", method = HttpMethod.GET)
-    public Response getFavorites(@PathParam("id") Long userId) {
-        // TODO Implement
-        return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "Get Ratings Successfully " + userId);
+    public List<MediaEntryOutDTO> getFavorites(@PathParam("id") Long userId) {
+        return mediaService.getMediaEntriesFavoritedByUser(userId);
     }
 
     @REST(path = "{id}/recommendations", method = HttpMethod.GET)

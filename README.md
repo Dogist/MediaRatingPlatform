@@ -23,3 +23,7 @@
 - Rating Allgemein
 - MediaEntry Favorite
 - Validation Verbesserungen
+
+### 16.10.2025 1,5h
+
+- 

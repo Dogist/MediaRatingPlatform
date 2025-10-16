@@ -6,25 +6,25 @@ import java.util.List;
 public class RatingEntity {
     private Long id;
     private UserEntity creator;
-    private MediaEntryEntity mediaEntry;
+    private Long mediaEntryId;
     private Short rating;
     private String comment;
     private LocalDateTime timestamp;
     private boolean confirmed;
     private List<UserEntity> likedByUsers;
 
-    public RatingEntity(UserEntity creator, MediaEntryEntity mediaEntry, Short rating, String comment) {
+    public RatingEntity(UserEntity creator, Long mediaEntryId, Short rating, String comment) {
         this.creator = creator;
-        this.mediaEntry = mediaEntry;
+        this.mediaEntryId = mediaEntryId;
         this.rating = rating;
         this.comment = comment;
         confirmed = false;
     }
 
-    public RatingEntity(Long id, UserEntity creator, MediaEntryEntity mediaEntry, Short rating, String comment, LocalDateTime timestamp, boolean confirmed, List<UserEntity> likedByUsers) {
+    public RatingEntity(Long id, UserEntity creator, Long mediaEntryId, Short rating, String comment, LocalDateTime timestamp, boolean confirmed, List<UserEntity> likedByUsers) {
         this.id = id;
         this.creator = creator;
-        this.mediaEntry = mediaEntry;
+        this.mediaEntryId = mediaEntryId;
         this.rating = rating;
         this.comment = comment;
         this.timestamp = timestamp;
@@ -48,12 +48,12 @@ public class RatingEntity {
         this.creator = creator;
     }
 
-    public MediaEntryEntity getMediaEntry() {
-        return mediaEntry;
+    public Long getMediaEntryId() {
+        return mediaEntryId;
     }
 
-    public void setMediaEntry(MediaEntryEntity mediaEntry) {
-        this.mediaEntry = mediaEntry;
+    public void setMediaEntryId(Long mediaEntryId) {
+        this.mediaEntryId = mediaEntryId;
     }
 
     public Short getRating() {

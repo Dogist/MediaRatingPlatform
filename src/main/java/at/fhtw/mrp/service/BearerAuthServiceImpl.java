@@ -1,6 +1,7 @@
 package at.fhtw.mrp.service;
 
 import at.fhtw.mrp.dao.UserDao;
+import at.fhtw.mrp.dao.UserDaoImpl;
 import at.fhtw.mrp.dto.UserAuthDTO;
 import at.fhtw.mrp.exceptions.InvalidInputException;
 
@@ -26,8 +27,8 @@ public class BearerAuthServiceImpl implements AuthService {
         currentBearerTokens = Collections.synchronizedSet(new HashSet<>());
     }
 
-    public BearerAuthServiceImpl() {
-        this.userDao = new UserDao();
+    public BearerAuthServiceImpl(UserDao userDao) {
+        this.userDao = userDao;
 
     }
 

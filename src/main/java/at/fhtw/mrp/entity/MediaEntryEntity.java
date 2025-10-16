@@ -2,6 +2,7 @@ package at.fhtw.mrp.entity;
 
 import at.fhtw.mrp.dto.MediaEntryType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MediaEntryEntity {
@@ -14,6 +15,8 @@ public class MediaEntryEntity {
     private Integer ageRestriction;
     private UserEntity creator;
     private List<UserEntity> usersFavorited;
+    private List<RatingEntity> ratings;
+    private Double averageRating;
 
     public MediaEntryEntity(MediaEntryType mediaType, String title, String description, Integer releaseYear, List<String> genres, Integer ageRestriction, UserEntity creator) {
         this.mediaType = mediaType;
@@ -23,9 +26,11 @@ public class MediaEntryEntity {
         this.genres = genres;
         this.ageRestriction = ageRestriction;
         this.creator = creator;
+        ratings = new ArrayList<>();
+        averageRating = null;
     }
 
-    public MediaEntryEntity(Long id, MediaEntryType mediaType, String title, String description, Integer releaseYear, List<String> genres, Integer ageRestriction, UserEntity creator, List<UserEntity> usersFavorited) {
+    public MediaEntryEntity(Long id, MediaEntryType mediaType, String title, String description, Integer releaseYear, List<String> genres, Integer ageRestriction, UserEntity creator, List<UserEntity> usersFavorited, List<RatingEntity> ratings, Double averageRating) {
         this.id = id;
         this.mediaType = mediaType;
         this.title = title;
@@ -35,6 +40,8 @@ public class MediaEntryEntity {
         this.ageRestriction = ageRestriction;
         this.creator = creator;
         this.usersFavorited = usersFavorited;
+        this.ratings = ratings;
+        this.averageRating = averageRating;
     }
 
     public Long getId() {
@@ -107,5 +114,21 @@ public class MediaEntryEntity {
 
     public void setUsersFavorited(List<UserEntity> usersFavorited) {
         this.usersFavorited = usersFavorited;
+    }
+
+    public List<RatingEntity> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<RatingEntity> ratings) {
+        this.ratings = ratings;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
     }
 }
