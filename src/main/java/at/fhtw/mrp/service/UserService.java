@@ -1,7 +1,6 @@
 package at.fhtw.mrp.service;
 
 import at.fhtw.mrp.dao.UserDao;
-import at.fhtw.mrp.dao.UserDaoImpl;
 import at.fhtw.mrp.dao.general.DataConflictException;
 import at.fhtw.mrp.dto.UserAuthDTO;
 import at.fhtw.mrp.dto.UserProfileDTO;
@@ -14,7 +13,7 @@ import at.fhtw.mrp.exceptions.UnauthorizedException;
 import java.util.Objects;
 
 public class UserService {
-    private final UserDao userDao = new UserDaoImpl();
+    private final UserDao userDao = CDI.INSTANCE.getService(UserDao.class);
 
     public void createUser(UserAuthDTO user) throws DataConflictException {
         if (user == null) {
@@ -32,7 +31,8 @@ public class UserService {
         if (userEntity == null) {
             throw new NotFoundException("Dieser User kann nicht gefunden werden.");
         }
-        // TODO add Statistics
+        userDao.hydrateUserStatistics(userEntity);
+
         return new UserProfileDTO(userEntity);
     }
 

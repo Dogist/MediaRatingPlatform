@@ -26,4 +26,9 @@
 
 ### 16.10.2025 1,5h
 
-- 
+- AverageScore und verschiedene andere Erweiterungen.
+
+### 24.10.2025 2,5h
+
+- UserStatistics
+- Recommendations

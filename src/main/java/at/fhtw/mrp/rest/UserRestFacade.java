@@ -2,6 +2,7 @@ package at.fhtw.mrp.rest;
 
 import at.fhtw.mrp.dao.general.DataConflictException;
 import at.fhtw.mrp.dto.*;
+import at.fhtw.mrp.exceptions.InvalidInputException;
 import at.fhtw.mrp.rest.http.ContentType;
 import at.fhtw.mrp.rest.http.HttpMethod;
 import at.fhtw.mrp.rest.http.HttpStatus;
@@ -69,8 +70,12 @@ public class UserRestFacade extends AbstractRestFacade {
     }
 
     @REST(path = "{id}/recommendations", method = HttpMethod.GET)
-    public Response getRecommendations(@PathParam("id") Long userId, @QueryParam("type") String type) {
-        // TODO Implement
-        return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "Get Recommendations Successfully " + userId + " :: " + type);
+    public List<MediaEntryOutDTO> getRecommendations(@PathParam("id") Long userId, @QueryParam("type") String type) {
+        if (type.equals("genre")) {
+            return mediaService.getRecommendationsForUserByGenre(userId);
+        } else if (type.equals("content")) {
+            return mediaService.getRecommendationsForUserByContent(userId);
+        }
+        throw new InvalidInputException("Dieser Typ von Empfehlungen ist nicht möglich.");
     }
 }

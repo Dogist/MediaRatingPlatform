@@ -53,7 +53,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public UserEntity getUserById(Long userId) {
         try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement preparedStatement = cw.prepareStatement("SELECT * FROM USER_ACC WHERE USER_ID = ?");
+            PreparedStatement preparedStatement = cw.prepareStatement("SELECT u.* FROM USER_ACC u WHERE u.USER_ID = ?");
             preparedStatement.setLong(1, userId);
 
             ResultSet rs = preparedStatement.executeQuery();
@@ -69,6 +69,27 @@ public class UserDaoImpl implements UserDao {
 
         } catch (SQLException e) {
             throw new DataAccessException("Es gab einen Fehler beim Holen des Benutzers.", e);
+        }
+    }
+
+    @Override
+    public void hydrateUserStatistics(UserEntity user) {
+        try (ConnectionWrapper cw = new ConnectionWrapper()) {
+            PreparedStatement preparedStatement = cw.prepareStatement("SELECT COUNT(r.rating) rating_count, AVG(r.rating) rating_avg FROM USER_ACC u LEFT join rating r on u.user_id=r.user_id WHERE u.USER_ID = ? GROUP BY u.user_id");
+            preparedStatement.setLong(1, user.getId());
+
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                double ratingAvg = rs.getDouble("RATING_AVG");
+                user.setRatingAvg(ratingAvg);
+                long ratingCount = rs.getLong("RATING_COUNT");
+                user.setRatingCount(ratingCount);
+            } else {
+                throw new DataAccessException("Es gab einen Fehler beim Holen der Benutzer-Statistik. " + user.getId());
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Es gab einen Fehler beim Holen der Benutzer-Statistik.", e);
         }
     }
 

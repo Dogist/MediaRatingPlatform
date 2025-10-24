@@ -5,6 +5,10 @@ import at.fhtw.mrp.entity.MediaEntryEntity;
 import java.util.List;
 
 public interface MediaEntryDao {
+
+    List<MediaEntryEntity> getMediaEntriesByUser(Long userId, boolean ratedByUser);
+
+
     List<MediaEntryEntity> searchMediaEntries(String title,
                                               String genre,
                                               String mediaType,

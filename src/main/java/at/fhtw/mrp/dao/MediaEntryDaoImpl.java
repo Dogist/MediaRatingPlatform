@@ -22,6 +22,30 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
     }
 
     @Override
+    public List<MediaEntryEntity> getMediaEntriesByUser(Long userId, boolean ratedByUser) {
+        try (ConnectionWrapper cw = new ConnectionWrapper()) {
+            String query;
+            if (ratedByUser) {
+                query = "SELECT media_entry.* FROM media_entry JOIN rating ON media_entry.media_entry_id = rating.media_entry_id WHERE rating.user_id = ?";
+            } else {
+                query = "SELECT media_entry.* FROM media_entry WHERE NOT exists(SELECT rating_id " +
+                        "FROM rating WHERE rating.media_entry_id = media_entry.media_entry_id AND rating.user_id = ?)";
+            }
+            PreparedStatement preparedStatement = cw.prepareStatement(query);
+            preparedStatement.setLong(1, userId);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            List<MediaEntryEntity> mediaEntries = new ArrayList<>();
+            while (rs.next()) {
+                mediaEntries.add(parseResultSet(rs));
+            }
+            return mediaEntries;
+        } catch (SQLException e) {
+            throw new DataAccessException("Es gab einen Fehler beim Holen von MediaEntries.", e);
+        }
+    }
+
+    @Override
     public List<MediaEntryEntity> searchMediaEntries(String title,
                                                      String genre,
                                                      String mediaType,

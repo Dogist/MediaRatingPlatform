@@ -7,6 +7,8 @@ public class UserProfileDTO {
     private String username;
     private String email;
     private String favoriteGenre;
+    private Long ratingCount;
+    private Double ratingAvg;
 
     public UserProfileDTO() {
     }
@@ -16,13 +18,8 @@ public class UserProfileDTO {
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.favoriteGenre = user.getFavoriteGenre();
-    }
-
-    public UserProfileDTO(Long id, String username, String email, String favoriteGenre) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.favoriteGenre = favoriteGenre;
+        this.ratingCount = user.getRatingCount();
+        this.ratingAvg = user.getRatingAvg();
     }
 
     public Long getId() {
@@ -55,5 +52,21 @@ public class UserProfileDTO {
 
     public void setFavoriteGenre(String favoriteGenre) {
         this.favoriteGenre = favoriteGenre;
+    }
+
+    public Long getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(Long ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public Double getRatingAvg() {
+        return ratingAvg;
+    }
+
+    public void setRatingAvg(Double ratingAvg) {
+        this.ratingAvg = ratingAvg;
     }
 }

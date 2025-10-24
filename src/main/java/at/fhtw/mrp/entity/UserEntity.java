@@ -1,7 +1,5 @@
 package at.fhtw.mrp.entity;
 
-import at.fhtw.mrp.dto.UserProfileDTO;
-
 import java.util.Objects;
 
 public class UserEntity {
@@ -10,15 +8,10 @@ public class UserEntity {
     private String password;
     private String email;
     private String favoriteGenre;
+    private Long ratingCount;
+    private Double ratingAvg;
 
     public UserEntity() {
-    }
-
-    public UserEntity(UserProfileDTO userProfileDTO) {
-        this.id = userProfileDTO.getId();
-        this.username = userProfileDTO.getUsername();
-        this.email = userProfileDTO.getEmail();
-        this.favoriteGenre = userProfileDTO.getFavoriteGenre();
     }
 
     public UserEntity(Long id, String username, String password, String email, String favoriteGenre) {
@@ -67,6 +60,22 @@ public class UserEntity {
 
     public void setFavoriteGenre(String favoriteGenre) {
         this.favoriteGenre = favoriteGenre;
+    }
+
+    public Long getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(Long ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public Double getRatingAvg() {
+        return ratingAvg;
+    }
+
+    public void setRatingAvg(Double ratingAvg) {
+        this.ratingAvg = ratingAvg;
     }
 
     @Override

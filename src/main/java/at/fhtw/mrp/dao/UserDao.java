@@ -13,6 +13,8 @@ public interface UserDao {
 
     UserEntity getUserById(Long userId);
 
+    void hydrateUserStatistics(UserEntity user);
+
     UserEntity getUserByUsername(String username);
 
     List<UserEntity> getUserByFavoriteMedia(long mediaEntryId);

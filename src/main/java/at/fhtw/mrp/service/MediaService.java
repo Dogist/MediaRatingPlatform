@@ -1,19 +1,23 @@
 package at.fhtw.mrp.service;
 
 import at.fhtw.mrp.dao.MediaEntryDao;
-import at.fhtw.mrp.dao.MediaEntryDaoImpl;
 import at.fhtw.mrp.dto.MediaEntryInDTO;
 import at.fhtw.mrp.dto.MediaEntryOutDTO;
 import at.fhtw.mrp.dto.MediaEntryType;
 import at.fhtw.mrp.entity.MediaEntryEntity;
+import at.fhtw.mrp.entity.RatingEntity;
 import at.fhtw.mrp.entity.UserEntity;
 import at.fhtw.mrp.exceptions.InvalidInputException;
 import at.fhtw.mrp.exceptions.NotFoundException;
 import at.fhtw.mrp.exceptions.UnauthorizedException;
 import org.apache.commons.lang3.Strings;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MediaService {
 
@@ -135,5 +139,67 @@ public class MediaService {
                 .stream()
                 .map(MediaEntryOutDTO::new)
                 .toList();
+    }
+
+    public List<MediaEntryOutDTO> getRecommendationsForUserByGenre(Long userId) {
+        ValidationUtil.validateEntityId(userId, "User");
+
+        List<MediaEntryEntity> ratedEntries = mediaEntryDao.getMediaEntriesByUser(userId, true);
+        List<MediaEntryEntity> unratedEntries = mediaEntryDao.getMediaEntriesByUser(userId, false);
+
+        Map<String, Long> summedGenreScores = ratedEntries.stream()
+                .flatMap(mediaEntryEntity -> {
+                    RatingEntity ownRating = mediaEntryEntity.getRatings().stream()
+                            .filter(r -> Objects.equals(r.getCreator().getId(), userId))
+                            .findFirst().orElse(null);
+                    assert ownRating != null;
+                    return mediaEntryEntity.getGenres().stream().map(genre -> new ScoreHolder(genre, ownRating.getRating()));
+                }).collect(Collectors.groupingBy(ScoreHolder::key,
+                        Collectors.<ScoreHolder>summingLong(ScoreHolder::score)));
+
+        return filterAndSortMediaEntriesByScore(unratedEntries.stream()
+                .map(m -> new ScoredMediaEntry(m, m.getGenres().stream()
+                        .mapToLong(g -> summedGenreScores.getOrDefault(g, 0L))
+                        .sum())));
+    }
+
+
+    public List<MediaEntryOutDTO> getRecommendationsForUserByContent(Long userId) {
+        ValidationUtil.validateEntityId(userId, "User");
+
+        List<MediaEntryEntity> ratedEntries = mediaEntryDao.getMediaEntriesByUser(userId, true);
+        List<MediaEntryEntity> unratedEntries = mediaEntryDao.getMediaEntriesByUser(userId, false);
+
+        Map<String, Long> genreScores = ratedEntries.stream().flatMap(m -> m.getGenres().stream())
+                .collect(Collectors.groupingBy(genre -> genre, Collectors.counting()));
+
+        Map<MediaEntryType, Long> typeScores = ratedEntries.stream()
+                .collect(Collectors.groupingBy(MediaEntryEntity::getMediaType, Collectors.counting()));
+        Map<Integer, Long> ageScores = ratedEntries.stream()
+                .collect(Collectors.groupingBy(MediaEntryEntity::getAgeRestriction,
+                        Collectors.counting()));
+
+        return filterAndSortMediaEntriesByScore(unratedEntries.stream()
+                .map(m -> new ScoredMediaEntry(m,
+                        m.getGenres().stream()
+                                .mapToLong(g -> genreScores.getOrDefault(g, 0L))
+                                .sum()
+                                + typeScores.getOrDefault(m.getMediaType(), 0L)
+                                + ageScores.getOrDefault(m.getAgeRestriction(), 0L)))
+        );
+    }
+
+    private static List<MediaEntryOutDTO> filterAndSortMediaEntriesByScore(Stream<ScoredMediaEntry> entries) {
+        return entries
+                .filter(m -> m.score() > 0)
+                .sorted(Comparator.comparingLong(ScoredMediaEntry::score))
+                .map(rm -> new MediaEntryOutDTO(rm.mediaEntry()))
+                .toList();
+    }
+
+    private record ScoreHolder(String key, int score) {
+    }
+
+    private record ScoredMediaEntry(MediaEntryEntity mediaEntry, long score) {
     }
 }
