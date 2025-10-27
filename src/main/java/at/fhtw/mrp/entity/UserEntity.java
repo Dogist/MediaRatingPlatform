@@ -82,11 +82,11 @@ public class UserEntity {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         UserEntity that = (UserEntity) o;
-        return Objects.equals(id, that.id) && Objects.equals(username, that.username) && Objects.equals(password, that.password) && Objects.equals(email, that.email) && Objects.equals(favoriteGenre, that.favoriteGenre);
+        return Objects.equals(id, that.id) || Objects.equals(username, that.username);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, email, favoriteGenre);
+        return Objects.hash(id, username);
     }
 }

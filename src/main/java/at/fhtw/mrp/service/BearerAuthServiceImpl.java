@@ -1,8 +1,8 @@
 package at.fhtw.mrp.service;
 
 import at.fhtw.mrp.dao.UserDao;
-import at.fhtw.mrp.dao.UserDaoImpl;
 import at.fhtw.mrp.dto.UserAuthDTO;
+import at.fhtw.mrp.entity.UserEntity;
 import at.fhtw.mrp.exceptions.InvalidInputException;
 
 import java.time.LocalDateTime;
@@ -43,8 +43,9 @@ public class BearerAuthServiceImpl implements AuthService {
         if (userAuth == null) {
             throw new InvalidInputException("Die Benutzerdaten sind unvollständig.");
         }
-        // TODO Hash Password
-        if (userDao.checkUserAuth(userAuth.username(), userAuth.password())) {
+        UserEntity user = userDao.getUserByUsername(userAuth.username());
+
+        if (user != null && HashUtil.checkHashedPassword(user.getPassword(), userAuth.password())) {
             synchronized (BearerAuthServiceImpl.class) {
                 String token = UUID.randomUUID().toString();
                 while (currentBearerTokens.contains(token)) {

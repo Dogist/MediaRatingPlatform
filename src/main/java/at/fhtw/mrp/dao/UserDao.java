@@ -9,17 +9,17 @@ import java.util.List;
 public interface UserDao {
     void createUser(String username, String passwordHash) throws DataConflictException;
 
-    boolean checkUserAuth(String username, String passwordHash);
-
     UserEntity getUserById(Long userId);
 
     void hydrateUserStatistics(UserEntity user);
 
     UserEntity getUserByUsername(String username);
 
-    List<UserEntity> getUserByFavoriteMedia(long mediaEntryId);
+    List<UserEntity> getUsersByFavoriteMedia(long mediaEntryId);
 
-    List<UserEntity> getUserByLikedRating(long ratingId);
+    List<UserEntity> getUsersByLikedRating(long ratingId);
 
     boolean updateUser(Long userId, UserProfileUpdateDTO userEntity);
+
+    List<UserEntity> getUsersByRatingCount();
 }

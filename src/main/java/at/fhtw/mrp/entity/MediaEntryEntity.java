@@ -4,6 +4,7 @@ import at.fhtw.mrp.dto.MediaEntryType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MediaEntryEntity {
     private Long id;
@@ -130,5 +131,17 @@ public class MediaEntryEntity {
 
     public void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        MediaEntryEntity that = (MediaEntryEntity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

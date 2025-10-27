@@ -164,7 +164,7 @@ public class RatingDaoImpl implements RatingDao {
                 rs.getString("comment"),
                 rs.getTimestamp("timestamp").toLocalDateTime(),
                 rs.getBoolean("confirmed"),
-                userDao.getUserByLikedRating(rs.getLong("rating_id"))
+                userDao.getUsersByLikedRating(rs.getLong("rating_id"))
         );
     }
 }

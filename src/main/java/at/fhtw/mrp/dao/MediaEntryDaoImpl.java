@@ -53,7 +53,11 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
                                                      Integer ageRestriction,
                                                      Integer rating,
                                                      String sortBy) {
-        StringBuilder sqlString = new StringBuilder("SELECT media_entry.*, (SELECT AVG(rating) FROM rating WHERE rating.media_entry_id = media_entry.media_entry_id) score FROM media_entry WHERE ");
+        StringBuilder sqlString = new StringBuilder("""
+                SELECT media_entry.*, AVG(r.rating) as rating
+                FROM media_entry
+                         JOIN rating r on (media_entry.media_entry_id = r.media_entry_id)
+                WHERE\s""");
 
         List<String> whereClauses = new ArrayList<>();
         List<Object> params = new ArrayList<>();
@@ -83,6 +87,8 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
         }
 
         sqlString.append(String.join(" AND ", whereClauses));
+
+        sqlString.append(" GROUP BY media_entry.media_entry_id");
 
         if (StringUtils.isNotBlank(sortBy)) {
             sqlString.append(" ORDER BY ").append(sortBy);
@@ -226,7 +232,7 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
                 Arrays.asList((String[]) rs.getArray("genres").getArray()),
                 rs.getInt("age_restriction"),
                 userDao.getUserById(rs.getLong("creator")),
-                userDao.getUserByFavoriteMedia(rs.getLong("media_entry_id")),
+                userDao.getUsersByFavoriteMedia(rs.getLong("media_entry_id")),
                 ratings,
                 averageRating
         );

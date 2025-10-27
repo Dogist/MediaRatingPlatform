@@ -1,12 +1,11 @@
 package at.fhtw.mrp.service;
 
 import at.fhtw.mrp.dao.UserDao;
-import at.fhtw.mrp.dao.UserDaoImpl;
 import at.fhtw.mrp.entity.UserEntity;
 
 public class UserSessionService {
 
-    private static final UserDao userDao = new UserDaoImpl();
+    private static final UserDao userDao = CDI.INSTANCE.getService(UserDao.class);
 
     private static final ThreadLocal<UserEntity> userSession = new ThreadLocal<>();
 

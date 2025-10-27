@@ -1,3 +1,6 @@
+## Git
+https://github.com/Dogist/MediaRatingPlatform
+
 ## Zeiten
 
 ### 27.09.2025 14:30-19:00 = 4,5h
@@ -32,3 +35,9 @@
 
 - UserStatistics
 - Recommendations
+
+### 27.10.2025 2h
+
+- Leaderboard
+- PW Hashing
+- Full-Search Fix

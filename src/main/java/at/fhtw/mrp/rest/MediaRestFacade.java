@@ -11,8 +11,7 @@ import at.fhtw.mrp.rest.server.PathParam;
 import at.fhtw.mrp.rest.server.QueryParam;
 import at.fhtw.mrp.rest.server.REST;
 import at.fhtw.mrp.rest.server.Response;
-import at.fhtw.mrp.service.MediaService;
-import at.fhtw.mrp.service.RatingService;
+import at.fhtw.mrp.service.*;
 
 import java.util.List;
 
@@ -23,8 +22,8 @@ public class MediaRestFacade extends AbstractRestFacade {
 
     public MediaRestFacade() {
         super("media");
-        mediaService = new MediaService();
-        ratingService = new RatingService();
+        mediaService = CDI.INSTANCE.getService(MediaService.class);
+        ratingService = CDI.INSTANCE.getService(RatingService.class);
     }
 
     @REST(method = HttpMethod.GET)

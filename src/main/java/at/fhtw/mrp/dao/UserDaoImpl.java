@@ -34,23 +34,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public boolean checkUserAuth(String username, String passwordHash) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement preparedStatement = cw.prepareStatement("SELECT COUNT(*) FROM USER_ACC WHERE USERNAME = ? AND PASSWORD = ?");
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, passwordHash);
-
-            ResultSet rs = preparedStatement.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) == 1;
-            }
-            return false;
-        } catch (SQLException e) {
-            throw new DataAccessException("Es gab einen Fehler beim Erstellen des Benutzers.", e);
-        }
-    }
-
-    @Override
     public UserEntity getUserById(Long userId) {
         try (ConnectionWrapper cw = new ConnectionWrapper()) {
             PreparedStatement preparedStatement = cw.prepareStatement("SELECT u.* FROM USER_ACC u WHERE u.USER_ID = ?");
@@ -60,7 +43,30 @@ public class UserDaoImpl implements UserDao {
             if (rs.next()) {
                 return new UserEntity(rs.getLong("USER_ID"),
                         rs.getString("USERNAME"),
-                        "",
+                        rs.getString("PASSWORD"),
+                        rs.getString("EMAIL"),
+                        rs.getString("FAVORITE_GENRE")
+                );
+            }
+            return null;
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Es gab einen Fehler beim Holen des Benutzers.", e);
+        }
+    }
+
+
+    @Override
+    public UserEntity getUserByUsername(String username) {
+        try (ConnectionWrapper cw = new ConnectionWrapper()) {
+            PreparedStatement preparedStatement = cw.prepareStatement("SELECT * FROM USER_ACC WHERE USERNAME = ?");
+            preparedStatement.setString(1, username);
+
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return new UserEntity(rs.getLong("USER_ID"),
+                        rs.getString("USERNAME"),
+                        rs.getString("PASSWORD"),
                         rs.getString("EMAIL"),
                         rs.getString("FAVORITE_GENRE")
                 );
@@ -94,29 +100,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public UserEntity getUserByUsername(String username) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement preparedStatement = cw.prepareStatement("SELECT * FROM USER_ACC WHERE USERNAME = ?");
-            preparedStatement.setString(1, username);
-
-            ResultSet rs = preparedStatement.executeQuery();
-            if (rs.next()) {
-                return new UserEntity(rs.getLong("USER_ID"),
-                        rs.getString("USERNAME"),
-                        "",
-                        rs.getString("EMAIL"),
-                        rs.getString("FAVORITE_GENRE")
-                );
-            }
-            return null;
-
-        } catch (SQLException e) {
-            throw new DataAccessException("Es gab einen Fehler beim Holen des Benutzers.", e);
-        }
-    }
-
-    @Override
-    public List<UserEntity> getUserByFavoriteMedia(long mediaEntryId) {
+    public List<UserEntity> getUsersByFavoriteMedia(long mediaEntryId) {
         try (ConnectionWrapper cw = new ConnectionWrapper()) {
             PreparedStatement preparedStatement = cw.prepareStatement("SELECT USER_ACC.* FROM USER_ACC JOIN public.user_favorite_media ufm on USER_ACC.user_id = ufm.user_id WHERE ufm.media_entry_id = ?");
             preparedStatement.setLong(1, mediaEntryId);
@@ -129,7 +113,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<UserEntity> getUserByLikedRating(long ratingId) {
+    public List<UserEntity> getUsersByLikedRating(long ratingId) {
         try (ConnectionWrapper cw = new ConnectionWrapper()) {
             PreparedStatement preparedStatement = cw.prepareStatement("SELECT USER_ACC.* FROM USER_ACC JOIN public.user_like_rating ufr on USER_ACC.user_id = ufr.user_id WHERE ufr.rating_id = ?");
             preparedStatement.setLong(1, ratingId);
@@ -156,6 +140,18 @@ public class UserDaoImpl implements UserDao {
             return count > 0;
         } catch (SQLException e) {
             throw new DataAccessException("Es gab einen Fehler beim Updaten des Benutzers.", e);
+        }
+    }
+
+    @Override
+    public List<UserEntity> getUsersByRatingCount() {
+        try (ConnectionWrapper cw = new ConnectionWrapper()) {
+            PreparedStatement preparedStatement = cw.prepareStatement("SELECT USER_ACC.*, count(r.*) r_count FROM USER_ACC LEFT JOIN public.rating r on USER_ACC.user_id = r.user_id GROUP BY user_acc.user_id ORDER BY r_count DESC");
+
+            return mapUserList(preparedStatement);
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Es gab einen Fehler beim Holen der Benutzer.", e);
         }
     }
 

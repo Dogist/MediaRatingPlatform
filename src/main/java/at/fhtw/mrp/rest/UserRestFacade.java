@@ -26,9 +26,9 @@ public class UserRestFacade extends AbstractRestFacade {
 
     public UserRestFacade() {
         super("users");
-        userService = new UserService();
-        mediaService = new MediaService();
-        ratingService = new RatingService();
+        userService = CDI.INSTANCE.getService(UserService.class);
+        mediaService = CDI.INSTANCE.getService(MediaService.class);
+        ratingService = CDI.INSTANCE.getService(RatingService.class);
         authService = CDI.INSTANCE.getService(AuthService.class);
     }
 

@@ -5,13 +5,15 @@ import at.fhtw.mrp.dto.RatingOutDTO;
 import at.fhtw.mrp.rest.http.HttpMethod;
 import at.fhtw.mrp.rest.server.PathParam;
 import at.fhtw.mrp.rest.server.REST;
+import at.fhtw.mrp.service.CDI;
 import at.fhtw.mrp.service.RatingService;
 
 public class RatingRestFacade extends AbstractRestFacade {
-    private final RatingService ratingService = new RatingService();
+    private final RatingService ratingService;
 
     public RatingRestFacade() {
         super("ratings");
+        this.ratingService = CDI.INSTANCE.getService(RatingService.class);
     }
 
     @REST(path = "{id}", method = HttpMethod.GET)

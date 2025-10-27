@@ -20,6 +20,9 @@ public enum CDI {
         services.put(UserDao.class, userDao);
         services.put(MediaEntryDao.class, mediaEntryDao);
         services.put(RatingDao.class, ratingDao);
+        services.put(UserService.class, new UserServiceImpl(userDao));
+        services.put(MediaService.class, new MediaServiceImpl(mediaEntryDao));
+        services.put(RatingService.class, new RatingServiceImpl(mediaEntryDao, ratingDao));
     }
 
     public <T> T getService(Class<T> serviceClass) {
