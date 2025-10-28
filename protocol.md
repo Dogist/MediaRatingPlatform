@@ -39,6 +39,7 @@
 - PW Hashing
 - Full-Search Fix
 
-### 28.10.2025
+### 28.10.2025 1h
 
 - Postman-Collection verbessert
+- Dinge für Abgabe herrichten
