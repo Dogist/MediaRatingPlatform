@@ -54,9 +54,9 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
                                                      Integer rating,
                                                      String sortBy) {
         StringBuilder sqlString = new StringBuilder("""
-                SELECT media_entry.*, AVG(r.rating) as rating
+                SELECT media_entry.*, AVG(r.rating) as score
                 FROM media_entry
-                         JOIN rating r on (media_entry.media_entry_id = r.media_entry_id)
+                        LEFT JOIN rating r on (media_entry.media_entry_id = r.media_entry_id)
                 WHERE\s""");
 
         List<String> whereClauses = new ArrayList<>();
