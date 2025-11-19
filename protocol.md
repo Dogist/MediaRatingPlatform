@@ -43,3 +43,8 @@
 
 - Postman-Collection verbessert
 - Dinge für Abgabe herrichten
+
+### 13.11.2025 1h
+
+- Refactoring
+- Unit-Tests

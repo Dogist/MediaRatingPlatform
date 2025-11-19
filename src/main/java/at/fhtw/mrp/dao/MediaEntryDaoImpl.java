@@ -23,15 +23,16 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public List<MediaEntryEntity> getMediaEntriesByUser(Long userId, boolean ratedByUser) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            String query;
-            if (ratedByUser) {
-                query = "SELECT media_entry.* FROM media_entry JOIN rating ON media_entry.media_entry_id = rating.media_entry_id WHERE rating.user_id = ?";
-            } else {
-                query = "SELECT media_entry.* FROM media_entry WHERE NOT exists(SELECT rating_id " +
-                        "FROM rating WHERE rating.media_entry_id = media_entry.media_entry_id AND rating.user_id = ?)";
-            }
-            PreparedStatement preparedStatement = cw.prepareStatement(query);
+        String query;
+        if (ratedByUser) {
+            query = "SELECT media_entry.* FROM media_entry JOIN rating ON media_entry.media_entry_id = rating.media_entry_id WHERE rating.user_id = ?";
+        } else {
+            query = "SELECT media_entry.* FROM media_entry WHERE NOT exists(SELECT rating_id " +
+                    "FROM rating WHERE rating.media_entry_id = media_entry.media_entry_id AND rating.user_id = ?)";
+        }
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement preparedStatement = cw.prepareStatement(query)) {
+
             preparedStatement.setLong(1, userId);
 
             ResultSet rs = preparedStatement.executeQuery();
@@ -94,18 +95,19 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
             sqlString.append(" ORDER BY ").append(sortBy);
         }
 
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement preparedStatement = cw.prepareStatement(sqlString.toString());
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement preparedStatement = cw.prepareStatement(sqlString.toString())) {
 
             for (int i = 0; i < params.size(); i++) {
                 Object param = params.get(i);
                 preparedStatement.setObject(i + 1, param);
             }
 
-            ResultSet rs = preparedStatement.executeQuery();
             List<MediaEntryEntity> mediaEntries = new ArrayList<>();
-            while (rs.next()) {
-                mediaEntries.add(parseResultSet(rs));
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    mediaEntries.add(parseResultSet(rs));
+                }
             }
             return mediaEntries;
         } catch (SQLException e) {
@@ -115,14 +117,15 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public List<MediaEntryEntity> getMediaEntriesFavoritedByUser(Long userId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement preparedStatement = cw.prepareStatement("SELECT media_entry.* FROM media_entry JOIN user_favorite_media ON media_entry.media_entry_id = user_favorite_media.media_entry_id WHERE user_id = ?");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement preparedStatement = cw.prepareStatement("SELECT media_entry.* FROM media_entry JOIN user_favorite_media ON media_entry.media_entry_id = user_favorite_media.media_entry_id WHERE user_id = ?")) {
             preparedStatement.setLong(1, userId);
 
-            ResultSet rs = preparedStatement.executeQuery();
             List<MediaEntryEntity> mediaEntries = new ArrayList<>();
-            while (rs.next()) {
-                mediaEntries.add(parseResultSet(rs));
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    mediaEntries.add(parseResultSet(rs));
+                }
             }
             return mediaEntries;
         } catch (SQLException e) {
@@ -132,8 +135,8 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public MediaEntryEntity createMediaEntry(MediaEntryEntity mediaEntry) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement mainStatement = cw.prepareStatement("INSERT INTO media_entry(media_type, title, description, creator, release_year, genres, age_restriction) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement mainStatement = cw.prepareStatement("INSERT INTO media_entry(media_type, title, description, creator, release_year, genres, age_restriction) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             mainStatement.setString(1, mediaEntry.getMediaType().name());
             mainStatement.setString(2, mediaEntry.getTitle());
             mainStatement.setString(3, mediaEntry.getDescription());
@@ -147,12 +150,13 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
             mainStatement.setInt(7, mediaEntry.getAgeRestriction());
 
             mainStatement.executeUpdate();
-            ResultSet generatedKeys = mainStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                long mediaEntryId = generatedKeys.getLong(1);
-                cw.commitTransaction();
-                mediaEntry.setId(mediaEntryId);
-                return mediaEntry;
+            try (ResultSet generatedKeys = mainStatement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    long mediaEntryId = generatedKeys.getLong(1);
+                    cw.commitTransaction();
+                    mediaEntry.setId(mediaEntryId);
+                    return mediaEntry;
+                }
             }
         } catch (SQLException e) {
             throw new DataAccessException("Es gab einen Fehler beim Erstellen des MediaEntry.", e);
@@ -162,13 +166,14 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public MediaEntryEntity getMediaEntry(Long mediaEntryId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement preparedStatement = cw.prepareStatement("SELECT * FROM media_entry WHERE media_entry.media_entry_id = ?");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement preparedStatement = cw.prepareStatement("SELECT * FROM media_entry WHERE media_entry.media_entry_id = ?")) {
             preparedStatement.setLong(1, mediaEntryId);
 
-            ResultSet rs = preparedStatement.executeQuery();
-            if (rs.next()) {
-                return parseResultSet(rs);
+            try (ResultSet rs = preparedStatement.executeQuery()) {
+                if (rs.next()) {
+                    return parseResultSet(rs);
+                }
             }
             return null;
 
@@ -180,8 +185,8 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public void updateMediaEntry(MediaEntryEntity mediaEntry) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement statement = cw.prepareStatement("UPDATE media_entry SET media_type = ?, title = ?, description = ?, release_year = ?, genres = ?, age_restriction = ? WHERE media_entry_id = ?");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement statement = cw.prepareStatement("UPDATE media_entry SET media_type = ?, title = ?, description = ?, release_year = ?, genres = ?, age_restriction = ? WHERE media_entry_id = ?")) {
             statement.setString(1, mediaEntry.getMediaType().name());
             statement.setString(2, mediaEntry.getTitle());
             statement.setString(3, mediaEntry.getDescription());
@@ -204,8 +209,8 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public boolean deleteMediaEntry(long mediaEntryId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement statement = cw.prepareStatement("DELETE FROM media_entry WHERE media_entry_id = ?");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement statement = cw.prepareStatement("DELETE FROM media_entry WHERE media_entry_id = ?")) {
             statement.setLong(1, mediaEntryId);
 
             int i = statement.executeUpdate();
@@ -213,6 +218,36 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
             return i > 0;
         } catch (SQLException e) {
             throw new DataAccessException("Es gab einen Fehler beim Löschen des MediaEntry.", e);
+        }
+    }
+
+
+    @Override
+    public void setMediaEntryFavorite(Long mediaEntryId, Long userEntityId) {
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement statement = cw.prepareStatement("INSERT INTO user_favorite_media(media_entry_id, user_id) VALUES (?, ?)")) {
+            statement.setLong(1, mediaEntryId);
+            statement.setLong(2, userEntityId);
+
+            statement.executeUpdate();
+            cw.commitTransaction();
+        } catch (SQLException e) {
+            throw new DataAccessException("Es gab einen Fehler beim Favorisieren des MediaEntry.", e);
+        }
+    }
+
+    @Override
+    public boolean removeMediaEntryFavorite(Long mediaEntryId, Long userEntityId) {
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement statement = cw.prepareStatement("DELETE FROM user_favorite_media WHERE media_entry_id = ? AND user_id = ?")) {
+            statement.setLong(1, mediaEntryId);
+            statement.setLong(2, userEntityId);
+
+            int i = statement.executeUpdate();
+            cw.commitTransaction();
+            return i > 0;
+        } catch (SQLException e) {
+            throw new DataAccessException("Es gab einen Fehler beim Unfavorisieren des MediaEntry.", e);
         }
     }
 
@@ -237,34 +272,4 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
                 averageRating
         );
     }
-
-    @Override
-    public void setMediaEntryFavorite(Long mediaEntryId, Long userEntityId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement statement = cw.prepareStatement("INSERT INTO user_favorite_media(media_entry_id, user_id) VALUES (?, ?)");
-            statement.setLong(1, mediaEntryId);
-            statement.setLong(2, userEntityId);
-
-            statement.executeUpdate();
-            cw.commitTransaction();
-        } catch (SQLException e) {
-            throw new DataAccessException("Es gab einen Fehler beim Favorisieren des MediaEntry.", e);
-        }
-    }
-
-    @Override
-    public boolean removeMediaEntryFavorite(Long mediaEntryId, Long userEntityId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement statement = cw.prepareStatement("DELETE FROM user_favorite_media WHERE media_entry_id = ? AND user_id = ?");
-            statement.setLong(1, mediaEntryId);
-            statement.setLong(2, userEntityId);
-
-            int i = statement.executeUpdate();
-            cw.commitTransaction();
-            return i > 0;
-        } catch (SQLException e) {
-            throw new DataAccessException("Es gab einen Fehler beim Unfavorisieren des MediaEntry.", e);
-        }
-    }
-
 }

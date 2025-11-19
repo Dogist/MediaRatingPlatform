@@ -20,8 +20,8 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public List<RatingEntity> getRatingsForUser(Long userId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement statement = cw.prepareStatement("SELECT * FROM rating WHERE user_id = ?");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement statement = cw.prepareStatement("SELECT * FROM rating WHERE user_id = ?")) {
             statement.setLong(1, userId);
 
             ResultSet rs = statement.executeQuery();
@@ -37,14 +37,15 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public List<RatingEntity> getRatingsForMediaEntry(long mediaEntryId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement statement = cw.prepareStatement("SELECT * FROM rating WHERE media_entry_id = ?");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement statement = cw.prepareStatement("SELECT * FROM rating WHERE media_entry_id = ?")) {
             statement.setLong(1, mediaEntryId);
 
-            ResultSet rs = statement.executeQuery();
             List<RatingEntity> ratings = new ArrayList<>();
-            while (rs.next()) {
-                ratings.add(parseRatingEntity(rs));
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    ratings.add(parseRatingEntity(rs));
+                }
             }
             return ratings;
         } catch (SQLException e) {
@@ -54,13 +55,14 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public RatingEntity getRating(long ratingId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement statement = cw.prepareStatement("SELECT * FROM rating WHERE rating_id = ?");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement statement = cw.prepareStatement("SELECT * FROM rating WHERE rating_id = ?")) {
             statement.setLong(1, ratingId);
 
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                return parseRatingEntity(rs);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return parseRatingEntity(rs);
+                }
             }
             return null;
         } catch (SQLException e) {
@@ -70,8 +72,8 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public RatingEntity createRating(RatingEntity rating) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement statement = cw.prepareStatement("INSERT INTO rating(user_id, media_entry_id, rating, comment, confirmed) VALUES (?, ?, ?, ?, ?)");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement statement = cw.prepareStatement("INSERT INTO rating(user_id, media_entry_id, rating, comment, confirmed) VALUES (?, ?, ?, ?, ?)")) {
             statement.setLong(1, rating.getCreator().getId());
             statement.setLong(2, rating.getMediaEntryId());
             statement.setShort(3, rating.getRating());
@@ -79,14 +81,15 @@ public class RatingDaoImpl implements RatingDao {
             statement.setBoolean(5, rating.isConfirmed());
 
             statement.executeUpdate();
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                long ratingId = generatedKeys.getLong("RATING_ID");
-                Timestamp timestamp = generatedKeys.getTimestamp("timestamp");
-                cw.commitTransaction();
-                rating.setId(ratingId);
-                rating.setTimestamp(timestamp.toLocalDateTime());
-                return rating;
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    long ratingId = generatedKeys.getLong("RATING_ID");
+                    Timestamp timestamp = generatedKeys.getTimestamp("timestamp");
+                    cw.commitTransaction();
+                    rating.setId(ratingId);
+                    rating.setTimestamp(timestamp.toLocalDateTime());
+                    return rating;
+                }
             }
         } catch (SQLException e) {
             throw new DataAccessException("Es gab einen Fehler beim Erstellen des Ratings.", e);
@@ -96,8 +99,8 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public void updateRating(RatingEntity rating) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement statement = cw.prepareStatement("UPDATE RATING SET rating=?, comment=?, confirmed=? WHERE media_entry_id=?");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement statement = cw.prepareStatement("UPDATE RATING SET rating=?, comment=?, confirmed=? WHERE media_entry_id=?")) {
             statement.setShort(1, rating.getRating());
             statement.setString(2, rating.getComment());
             statement.setBoolean(3, rating.isConfirmed());
@@ -112,8 +115,8 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public boolean deleteRating(long ratingId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement mainStatement = cw.prepareStatement("DELETE FROM rating WHERE rating_id = ?");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement mainStatement = cw.prepareStatement("DELETE FROM rating WHERE rating_id = ?")) {
             mainStatement.setLong(1, ratingId);
 
             int i = mainStatement.executeUpdate();
@@ -126,8 +129,8 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public void setRatingLiked(Long ratingId, Long userId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement statement = cw.prepareStatement("INSERT INTO user_like_rating(rating_id, user_id) VALUES (?, ?)");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement statement = cw.prepareStatement("INSERT INTO user_like_rating(rating_id, user_id) VALUES (?, ?)")) {
             statement.setLong(1, ratingId);
             statement.setLong(2, userId);
 
@@ -140,8 +143,8 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public boolean removeRatingLiked(Long ratingId, Long userId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper()) {
-            PreparedStatement statement = cw.prepareStatement("DELETE FROM user_like_rating WHERE rating_id = ? AND user_id = ?");
+        try (ConnectionWrapper cw = new ConnectionWrapper();
+             PreparedStatement statement = cw.prepareStatement("DELETE FROM user_like_rating WHERE rating_id = ? AND user_id = ?")) {
             statement.setLong(1, ratingId);
             statement.setLong(2, userId);
 
