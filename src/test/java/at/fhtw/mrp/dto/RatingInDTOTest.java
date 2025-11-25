@@ -9,25 +9,25 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class RatingInDTOTest {
 
     @Test
-    void validateCorrectRatingInDTO() {
+    void validate_correctRatingInDTO() {
         RatingInDTO correctRatingInDTO = new RatingInDTO((short) 3, "comment");
         assertDoesNotThrow(correctRatingInDTO::validate, "Validiere ein korrektes RatingInDTO");
     }
 
     @Test
-    void validateNoStarsRatingInDTO() {
+    void validate_noStarsRatingInDTO() {
         RatingInDTO invalidRatingInDTO1 = new RatingInDTO(null, "comment");
         assertThrows(InvalidInputException.class, invalidRatingInDTO1::validate, "Validiere ein invalides null-Stars RatingInDTO");
     }
 
     @Test
-    void validateNegativStarsRatingInDTO() {
+    void validate_negativStarsRatingInDTO() {
         RatingInDTO invalidRatingInDTO2 = new RatingInDTO((short) -1, "comment");
         assertThrows(InvalidInputException.class, invalidRatingInDTO2::validate, "Validiere ein invalides negativ-Stars RatingInDTO");
     }
 
     @Test
-    void validateTooManyStarsRatingInDTO() {
+    void validate_tooManyStarsRatingInDTO() {
         RatingInDTO invalidRatingInDTO3 = new RatingInDTO((short) 6, "comment");
         assertThrows(InvalidInputException.class, invalidRatingInDTO3::validate, "Validiere ein invalides zu groß-Stars RatingInDTO");
     }

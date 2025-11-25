@@ -7,11 +7,11 @@ import at.fhtw.mrp.exceptions.InvalidInputException;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-/**
- * Service für die Authentifizierung des Users.
- * TODO wegen Synchronität prüfen. Semaphores?
- */
+
 public class BearerAuthServiceImpl implements AuthService {
     /**
      * Auth-Token Lifetime in Minuten.
@@ -19,25 +19,15 @@ public class BearerAuthServiceImpl implements AuthService {
     public static final int TOKEN_LIFETIME = 60;
 
     private final UserDao userDao;
-    private static final List<AuthToken> activeAuthTokens;
-    private static final Set<String> currentBearerTokens;
-
-    static {
-        activeAuthTokens = Collections.synchronizedList(new ArrayList<>());
-        currentBearerTokens = Collections.synchronizedSet(new HashSet<>());
-    }
+    private static final List<AuthToken> activeAuthTokens = new ArrayList<>();
+    private static final Set<String> currentBearerTokens = new HashSet<>();
+    private static final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
     public BearerAuthServiceImpl(UserDao userDao) {
         this.userDao = userDao;
 
     }
 
-    /**
-     * MMethode welche versucht das übergebene {@link UserAuthDTO} zu authentifizieren.
-     *
-     * @param userAuth welcher authentifiziert wird.
-     * @return String Bearer-Token, welcher für die Authentifizierung verwendet werden kann.
-     */
     @Override
     public String loginUser(UserAuthDTO userAuth) throws InvalidInputException {
         if (userAuth == null) {
@@ -46,45 +36,51 @@ public class BearerAuthServiceImpl implements AuthService {
         UserEntity user = userDao.getUserByUsername(userAuth.username());
 
         if (user != null && HashUtil.checkHashedPassword(user.getPassword(), userAuth.password())) {
-            synchronized (BearerAuthServiceImpl.class) {
-                String token = UUID.randomUUID().toString();
-                while (currentBearerTokens.contains(token)) {
-                    token = UUID.randomUUID().toString();
-                }
-                currentBearerTokens.add(token);
-                activeAuthTokens.add(new AuthToken(
-                        token,
-                        userAuth.username(),
-                        LocalDateTime.now().plusMinutes(TOKEN_LIFETIME)));
-                return token;
+            Lock lock = readWriteLock.writeLock();
+            lock.lock();
+            String token = UUID.randomUUID().toString();
+            while (currentBearerTokens.contains(token)) {
+                token = UUID.randomUUID().toString();
             }
+            currentBearerTokens.add(token);
+            activeAuthTokens.add(new AuthToken(
+                    token,
+                    userAuth.username(),
+                    LocalDateTime.now().plusMinutes(TOKEN_LIFETIME)));
+            lock.unlock();
+            return token;
         }
         throw new InvalidInputException("Der angegebene Benutzer konnte nicht angemeldet werden.");
     }
 
-    /**
-     * Methode welche einen Bearer-Token überprüft, und den User zurückgibt, wenn erfolgreich.
-     *
-     * @param token welche geprüft wird.
-     * @return Benutzername des Users welcher authentifiziert wurde.
-     */
     @Override
     public String checkAuthToken(String token) {
         String foundUser = null;
-        if (currentBearerTokens.contains(token)) {
-            synchronized (BearerAuthServiceImpl.class) {
-                for (Iterator<AuthToken> iterator = activeAuthTokens.iterator(); iterator.hasNext(); ) {
-                    AuthToken activeAuthToken = iterator.next();
-                    if (activeAuthToken.expiration.isBefore(LocalDateTime.now())) {
-                        iterator.remove();
-                        currentBearerTokens.remove(activeAuthToken.token);
-                    } else if (activeAuthToken.token.equals(token)) {
-                        foundUser = activeAuthToken.username;
-                        // Token erweitern
-                        activeAuthToken.setExpiration(LocalDateTime.now().plusMinutes(TOKEN_LIFETIME));
-                    }
+        Lock readLock = readWriteLock.readLock();
+        try {
+            readLock.lock();
+            if (!currentBearerTokens.contains(token)) {
+                return null;
+            }
+        } finally {
+            readLock.unlock();
+        }
+        Lock writeLock = readWriteLock.writeLock();
+        try {
+            writeLock.lock();
+            for (Iterator<AuthToken> iterator = activeAuthTokens.iterator(); iterator.hasNext(); ) {
+                AuthToken activeAuthToken = iterator.next();
+                if (activeAuthToken.expiration.isBefore(LocalDateTime.now())) {
+                    iterator.remove();
+                    currentBearerTokens.remove(activeAuthToken.token);
+                } else if (activeAuthToken.token.equals(token)) {
+                    foundUser = activeAuthToken.username;
+                    // Token erweitern
+                    activeAuthToken.setExpiration(LocalDateTime.now().plusMinutes(TOKEN_LIFETIME));
                 }
             }
+        } finally {
+            writeLock.unlock();
         }
         return foundUser;
     }

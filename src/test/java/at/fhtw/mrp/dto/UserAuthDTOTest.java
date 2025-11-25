@@ -8,25 +8,25 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserAuthDTOTest {
 
     @Test
-    void validateCorrectUserAuthDTO() {
+    void validate_correctUserAuthDTO() {
         UserAuthDTO correctUserAuthDTO = new UserAuthDTO("username", "password");
         assertDoesNotThrow(correctUserAuthDTO::validate, "Validiere ein korrektes UserAuthDTO");
     }
 
     @Test
-    void validateMissingUsernameUserAuthDTO() {
+    void validate_missingUsernameUserAuthDTO() {
         UserAuthDTO invalidUserAuthDTO1 = new UserAuthDTO("", "password");
         assertThrows(InvalidInputException.class, invalidUserAuthDTO1::validate, "Validiere ein invalides UserAuthDTO");
     }
 
     @Test
-    void validateMissingPasswordUserAuthDTO() {
+    void validate_missingPasswordUserAuthDTO() {
         UserAuthDTO invalidUserAuthDTO2 = new UserAuthDTO("username", "");
         assertThrows(InvalidInputException.class, invalidUserAuthDTO2::validate, "Validiere ein invalides UserAuthDTO");
     }
 
     @Test
-    void validateEmptyUserAuthDTO() {
+    void validate_emptyUserAuthDTO() {
         UserAuthDTO invalidUserAuthDTO3 = new UserAuthDTO("", "");
         assertThrows(InvalidInputException.class, invalidUserAuthDTO3::validate, "Validiere ein invalides UserAuthDTO");
     }

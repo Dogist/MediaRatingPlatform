@@ -101,7 +101,7 @@ public abstract class AbstractRestFacade implements HttpHandler {
                             responseHandled = true;
                             break;
                         } else {
-                            throw new RuntimeException("Es gab einen Fehler!", e);
+                            throw new Exception("Es gab einen Fehler!", e);
                         }
                     }
                 }
