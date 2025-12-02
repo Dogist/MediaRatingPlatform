@@ -3,7 +3,8 @@ package at.fhtw.mrp.dto;
 import at.fhtw.mrp.exceptions.InvalidInputException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserAuthDTOTest {
 

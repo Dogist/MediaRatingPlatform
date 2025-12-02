@@ -11,9 +11,9 @@ public enum DatabaseManager {
     {
         try {
             return DriverManager.getConnection(
-                    "jdbc:postgresql://localhost:5432/docker",
-                    "docker",
-                    "docker");
+                    "jdbc:postgresql://localhost:5432/mrp",
+                    "mrp",
+                    "mrp");
         } catch (SQLException e) {
             throw new DataAccessException("Datenbankverbindungsaufbau nicht erfolgreich", e);
         }

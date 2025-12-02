@@ -4,20 +4,23 @@ import at.fhtw.mrp.dao.UserDao;
 import at.fhtw.mrp.dto.UserAuthDTO;
 import at.fhtw.mrp.entity.UserEntity;
 import at.fhtw.mrp.exceptions.InvalidInputException;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 class BearerAuthServiceImplTest {
 
-    private AuthService authService;
-    private final UserAuthDTO validUserAuthDTO = new UserAuthDTO("valid", "valid");
-    private final UserAuthDTO invalidUserAuthDTO = new UserAuthDTO("invalid", "invalid");
+    private static AuthService authService;
+    private final static UserAuthDTO validUserAuthDTO = new UserAuthDTO("valid", "valid");
+    private final static UserAuthDTO invalidUserAuthDTO = new UserAuthDTO("invalid", "invalid");
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         UserDao userDao = Mockito.mock(UserDao.class);
         authService = new BearerAuthServiceImpl(userDao);
 

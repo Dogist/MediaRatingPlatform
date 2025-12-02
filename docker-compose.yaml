@@ -1,0 +1,28 @@
+services:
+  db:
+    container_name: mrp
+    image: postgres:17.6
+    environment:
+      POSTGRES_USER: mrp
+      POSTGRES_PASSWORD: mrp
+      PGDATA: /data/postgres
+      POSTGRES_DB: mrp
+    volumes:
+      - db:/data/postgres
+      - ./init.sql:/docker-entrypoint-initdb.d/create_database.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - db
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:

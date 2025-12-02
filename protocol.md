@@ -48,3 +48,12 @@
 
 - Refactoring
 - Unit-Tests
+
+### 25.11.2025 1,5h
+
+- BearerAuthServiceImpl Synchronisierung verbessert
+- AuthService Tests
+
+### 02.12.2025 0,5h
+
+- Refactoring
