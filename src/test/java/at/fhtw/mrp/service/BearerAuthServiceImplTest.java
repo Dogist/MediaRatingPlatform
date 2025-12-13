@@ -15,13 +15,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class BearerAuthServiceImplTest {
 
+    private static UserDao userDao;
     private static AuthService authService;
     private final static UserAuthDTO validUserAuthDTO = new UserAuthDTO("valid", "valid");
-    private final static UserAuthDTO invalidUserAuthDTO = new UserAuthDTO("invalid", "invalid");
 
     @BeforeAll
     static void setUp() {
-        UserDao userDao = Mockito.mock(UserDao.class);
+        userDao = Mockito.mock(UserDao.class);
         authService = new BearerAuthServiceImpl(userDao);
 
         UserEntity validUserEntity = new UserEntity(0L, "valid", HashUtil.generateHashedPassword("valid"), "", "");
@@ -29,18 +29,18 @@ class BearerAuthServiceImplTest {
     }
 
     @Test
-    void loginUser_validUser() {
-        assertNotNull(authService.loginUser(validUserAuthDTO), "Validiere einen validen Login.");
-    }
-
-    @Test
     void loginUser_invalidUser() {
+        UserAuthDTO invalidUserAuthDTO = new UserAuthDTO("invalid", "invalid");
         assertThrows(InvalidInputException.class, () -> authService.loginUser(invalidUserAuthDTO), "Validiere einen invaliden Login.");
     }
 
     @Test
     void checkAuthToken_validToken() {
         String token = authService.loginUser(validUserAuthDTO);
+
+        Mockito.verify(userDao).getUserByUsername(Mockito.anyString());
+
+        assertNotNull(token, "Validiere einen validen Login.");
         assertEquals(authService.checkAuthToken(token), validUserAuthDTO.username(), "Validiere einen korrekten Login und Autorisierung.");
     }
 
