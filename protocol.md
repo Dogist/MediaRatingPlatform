@@ -57,3 +57,11 @@
 ### 02.12.2025 0,5h
 
 - Refactoring
+
+### 13.12.2025 0,5h
+
+- Refactoring
+
+### 16.12.2025 0,5h
+
+- JUnit für normales Maven 3.X fixen

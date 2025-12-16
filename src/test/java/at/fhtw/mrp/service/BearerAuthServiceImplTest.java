@@ -24,7 +24,7 @@ class BearerAuthServiceImplTest {
         userDao = Mockito.mock(UserDao.class);
         authService = new BearerAuthServiceImpl(userDao);
 
-        UserEntity validUserEntity = new UserEntity(0L, "valid", HashUtil.generateHashedPassword("valid"), "", "");
+        UserEntity validUserEntity = new UserEntity(0L, validUserAuthDTO.username(), HashUtil.generateHashedPassword(validUserAuthDTO.password()), "", "");
         Mockito.when(userDao.getUserByUsername(validUserAuthDTO.username())).thenReturn(validUserEntity);
     }
 
