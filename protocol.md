@@ -65,3 +65,8 @@
 ### 16.12.2025 0,5h
 
 - JUnit für normales Maven 3.X fixen
+
+### 29.12.2025 2,5h
+
+- DB-Tests aufsetzen
+- UserDao-Tests implementieren

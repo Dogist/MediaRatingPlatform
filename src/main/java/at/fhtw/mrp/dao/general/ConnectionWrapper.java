@@ -6,8 +6,8 @@ public class ConnectionWrapper implements AutoCloseable {
 
     private Connection connection;
 
-    public ConnectionWrapper() {
-        this.connection = DatabaseManager.INSTANCE.getConnection();
+    public ConnectionWrapper(Connection connection) {
+        this.connection = connection;
         try {
             this.connection.setAutoCommit(false);
         } catch (SQLException e) {

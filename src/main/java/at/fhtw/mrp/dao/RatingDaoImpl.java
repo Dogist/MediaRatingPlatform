@@ -2,6 +2,7 @@ package at.fhtw.mrp.dao;
 
 import at.fhtw.mrp.dao.general.ConnectionWrapper;
 import at.fhtw.mrp.dao.general.DataAccessException;
+import at.fhtw.mrp.dao.general.DatabaseManager;
 import at.fhtw.mrp.entity.RatingEntity;
 
 import java.sql.PreparedStatement;
@@ -12,15 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RatingDaoImpl implements RatingDao {
+    private final DatabaseManager databaseManager;
     private final UserDao userDao;
 
-    public RatingDaoImpl(UserDao userDao) {
+    public RatingDaoImpl(DatabaseManager databaseManager, UserDao userDao) {
+        this.databaseManager = databaseManager;
         this.userDao = userDao;
     }
 
     @Override
     public List<RatingEntity> getRatingsForUser(Long userId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement statement = cw.prepareStatement("SELECT * FROM rating WHERE user_id = ?")) {
             statement.setLong(1, userId);
 
@@ -37,7 +40,7 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public List<RatingEntity> getRatingsForMediaEntry(long mediaEntryId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement statement = cw.prepareStatement("SELECT * FROM rating WHERE media_entry_id = ?")) {
             statement.setLong(1, mediaEntryId);
 
@@ -55,7 +58,7 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public RatingEntity getRating(long ratingId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement statement = cw.prepareStatement("SELECT * FROM rating WHERE rating_id = ?")) {
             statement.setLong(1, ratingId);
 
@@ -72,7 +75,7 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public RatingEntity createRating(RatingEntity rating) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement statement = cw.prepareStatement("INSERT INTO rating(user_id, media_entry_id, rating, comment, confirmed) VALUES (?, ?, ?, ?, ?)")) {
             statement.setLong(1, rating.getCreator().getId());
             statement.setLong(2, rating.getMediaEntryId());
@@ -99,7 +102,7 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public void updateRating(RatingEntity rating) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement statement = cw.prepareStatement("UPDATE RATING SET rating=?, comment=?, confirmed=? WHERE media_entry_id=?")) {
             statement.setShort(1, rating.getRating());
             statement.setString(2, rating.getComment());
@@ -115,7 +118,7 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public boolean deleteRating(long ratingId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement mainStatement = cw.prepareStatement("DELETE FROM rating WHERE rating_id = ?")) {
             mainStatement.setLong(1, ratingId);
 
@@ -129,7 +132,7 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public void setRatingLiked(Long ratingId, Long userId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement statement = cw.prepareStatement("INSERT INTO user_like_rating(rating_id, user_id) VALUES (?, ?)")) {
             statement.setLong(1, ratingId);
             statement.setLong(2, userId);
@@ -143,7 +146,7 @@ public class RatingDaoImpl implements RatingDao {
 
     @Override
     public boolean removeRatingLiked(Long ratingId, Long userId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement statement = cw.prepareStatement("DELETE FROM user_like_rating WHERE rating_id = ? AND user_id = ?")) {
             statement.setLong(1, ratingId);
             statement.setLong(2, userId);

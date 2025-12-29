@@ -1,6 +1,8 @@
 package at.fhtw.mrp.service;
 
 import at.fhtw.mrp.dao.*;
+import at.fhtw.mrp.dao.general.DatabaseManager;
+import at.fhtw.mrp.dao.general.DatabaseManagerImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,10 +14,12 @@ public enum CDI {
 
     CDI() {
         services = new HashMap<>();
-        UserDao userDao = new UserDaoImpl();
-        RatingDao ratingDao = new RatingDaoImpl(userDao);
-        MediaEntryDao mediaEntryDao = new MediaEntryDaoImpl(userDao, ratingDao);
+        DatabaseManagerImpl databaseManager = new DatabaseManagerImpl();
+        UserDao userDao = new UserDaoImpl(databaseManager);
+        RatingDao ratingDao = new RatingDaoImpl(databaseManager, userDao);
+        MediaEntryDao mediaEntryDao = new MediaEntryDaoImpl(databaseManager, userDao, ratingDao);
 
+        services.put(DatabaseManager.class, databaseManager);
         services.put(AuthService.class, new BearerAuthServiceImpl(userDao));
         services.put(UserDao.class, userDao);
         services.put(MediaEntryDao.class, mediaEntryDao);
@@ -31,5 +35,17 @@ public enum CDI {
             return (T) o;
         }
         throw new RuntimeException("Kein Service für die Klasse " + serviceClass.getName() + " gefunden.");
+    }
+
+    /**
+     * <b>Diese Funktion ist nur eine Test-Funktion! nicht im normalen Code verwenden!</b>
+     */
+    public <T> void overrideService(Class<T> serviceClass, T service) {
+        Object o = services.get(serviceClass);
+        if (o != null) {
+            services.put(serviceClass, service);
+        } else {
+            throw new RuntimeException("Kein Service für die Klasse " + serviceClass.getName() + " gefunden.");
+        }
     }
 }

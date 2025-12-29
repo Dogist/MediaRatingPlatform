@@ -2,6 +2,7 @@ package at.fhtw.mrp.dao;
 
 import at.fhtw.mrp.dao.general.ConnectionWrapper;
 import at.fhtw.mrp.dao.general.DataAccessException;
+import at.fhtw.mrp.dao.general.DatabaseManager;
 import at.fhtw.mrp.dto.MediaEntryType;
 import at.fhtw.mrp.entity.MediaEntryEntity;
 import at.fhtw.mrp.entity.RatingEntity;
@@ -13,10 +14,12 @@ import java.sql.SQLException;
 import java.util.*;
 
 public class MediaEntryDaoImpl implements MediaEntryDao {
+    private final DatabaseManager databaseManager;
     private final UserDao userDao;
     private final RatingDao ratingDao;
 
-    public MediaEntryDaoImpl(UserDao userDao, RatingDao ratingDao) {
+    public MediaEntryDaoImpl(DatabaseManager databaseManager, UserDao userDao, RatingDao ratingDao) {
+        this.databaseManager = databaseManager;
         this.userDao = userDao;
         this.ratingDao = ratingDao;
     }
@@ -30,7 +33,7 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
             query = "SELECT media_entry.* FROM media_entry WHERE NOT exists(SELECT rating_id " +
                     "FROM rating WHERE rating.media_entry_id = media_entry.media_entry_id AND rating.user_id = ?)";
         }
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement preparedStatement = cw.prepareStatement(query)) {
 
             preparedStatement.setLong(1, userId);
@@ -95,7 +98,7 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
             sqlString.append(" ORDER BY ").append(sortBy);
         }
 
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement preparedStatement = cw.prepareStatement(sqlString.toString())) {
 
             for (int i = 0; i < params.size(); i++) {
@@ -117,7 +120,7 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public List<MediaEntryEntity> getMediaEntriesFavoritedByUser(Long userId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement preparedStatement = cw.prepareStatement("SELECT media_entry.* FROM media_entry JOIN user_favorite_media ON media_entry.media_entry_id = user_favorite_media.media_entry_id WHERE user_id = ?")) {
             preparedStatement.setLong(1, userId);
 
@@ -135,7 +138,7 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public MediaEntryEntity createMediaEntry(MediaEntryEntity mediaEntry) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement mainStatement = cw.prepareStatement("INSERT INTO media_entry(media_type, title, description, creator, release_year, genres, age_restriction) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             mainStatement.setString(1, mediaEntry.getMediaType().name());
             mainStatement.setString(2, mediaEntry.getTitle());
@@ -166,7 +169,7 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public MediaEntryEntity getMediaEntry(Long mediaEntryId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement preparedStatement = cw.prepareStatement("SELECT * FROM media_entry WHERE media_entry.media_entry_id = ?")) {
             preparedStatement.setLong(1, mediaEntryId);
 
@@ -185,7 +188,7 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public void updateMediaEntry(MediaEntryEntity mediaEntry) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement statement = cw.prepareStatement("UPDATE media_entry SET media_type = ?, title = ?, description = ?, release_year = ?, genres = ?, age_restriction = ? WHERE media_entry_id = ?")) {
             statement.setString(1, mediaEntry.getMediaType().name());
             statement.setString(2, mediaEntry.getTitle());
@@ -209,7 +212,7 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public boolean deleteMediaEntry(long mediaEntryId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement statement = cw.prepareStatement("DELETE FROM media_entry WHERE media_entry_id = ?")) {
             statement.setLong(1, mediaEntryId);
 
@@ -224,7 +227,7 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public void setMediaEntryFavorite(Long mediaEntryId, Long userEntityId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement statement = cw.prepareStatement("INSERT INTO user_favorite_media(media_entry_id, user_id) VALUES (?, ?)")) {
             statement.setLong(1, mediaEntryId);
             statement.setLong(2, userEntityId);
@@ -238,7 +241,7 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
 
     @Override
     public boolean removeMediaEntryFavorite(Long mediaEntryId, Long userEntityId) {
-        try (ConnectionWrapper cw = new ConnectionWrapper();
+        try (ConnectionWrapper cw = databaseManager.getConnection();
              PreparedStatement statement = cw.prepareStatement("DELETE FROM user_favorite_media WHERE media_entry_id = ? AND user_id = ?")) {
             statement.setLong(1, mediaEntryId);
             statement.setLong(2, userEntityId);
