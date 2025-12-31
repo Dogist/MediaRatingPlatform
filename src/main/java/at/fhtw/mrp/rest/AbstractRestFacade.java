@@ -173,6 +173,8 @@ public abstract class AbstractRestFacade implements HttpHandler {
                         params.add(Long.parseLong(p));
                     } else if (parameter.getType().isAssignableFrom(Integer.class)) {
                         params.add(Integer.parseInt(p));
+                    } else if (parameter.getType().isAssignableFrom(Short.class)) {
+                        params.add(Short.parseShort(p));
                     } else {
                         params.add(p);
                     }
@@ -186,6 +188,8 @@ public abstract class AbstractRestFacade implements HttpHandler {
                         params.add(Long.parseLong(p));
                     } else if (parameter.getType().isAssignableFrom(Integer.class)) {
                         params.add(Integer.parseInt(p));
+                    } else if (parameter.getType().isAssignableFrom(Short.class)) {
+                        params.add(Short.parseShort(p));
                     } else {
                         params.add(p);
                     }

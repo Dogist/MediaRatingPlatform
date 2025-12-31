@@ -12,7 +12,7 @@ public interface MediaService {
                                               String mediaType,
                                               Integer releaseYear,
                                               Integer ageRestriction,
-                                              Integer rating,
+                                              Short rating,
                                               String sortBy);
 
     MediaEntryOutDTO getMediaEntry(Long mediaEntryId);

@@ -55,7 +55,7 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
                                                      String mediaType,
                                                      Integer releaseYear,
                                                      Integer ageRestriction,
-                                                     Integer rating,
+                                                     Short rating,
                                                      String sortBy) {
         StringBuilder sqlString = new StringBuilder("""
                 SELECT media_entry.*, AVG(r.rating) as score
@@ -85,17 +85,22 @@ public class MediaEntryDaoImpl implements MediaEntryDao {
             whereClauses.add("AGE_RESTRICTION = ?");
             params.add(ageRestriction);
         }
-        if (Objects.nonNull(rating)) {
-            whereClauses.add("RATING = ?");
-            params.add(rating);
-        }
 
         sqlString.append(String.join(" AND ", whereClauses));
 
         sqlString.append(" GROUP BY media_entry.media_entry_id");
 
+        if (Objects.nonNull(rating)) {
+            sqlString.append(" HAVING AVG(r.rating) >= ? ");
+            params.add(rating);
+        }
+
         if (StringUtils.isNotBlank(sortBy)) {
-            sqlString.append(" ORDER BY ").append(sortBy);
+            if (sortBy.equals("score")) {
+                sqlString.append(" ORDER BY ").append(sortBy).append(" DESC");
+            } else {
+                sqlString.append(" ORDER BY ").append(sortBy);
+            }
         }
 
         try (ConnectionWrapper cw = databaseManager.getConnection();

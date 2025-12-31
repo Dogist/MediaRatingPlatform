@@ -2,6 +2,7 @@ package at.fhtw.mrp.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 public class RatingEntity {
     private Long id;
@@ -94,5 +95,16 @@ public class RatingEntity {
 
     public void setLikedByUsers(List<UserEntity> likedByUsers) {
         this.likedByUsers = likedByUsers;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof RatingEntity that)) return false;
+        return Objects.equals(id, that.id) && Objects.equals(creator, that.creator) && Objects.equals(mediaEntryId, that.mediaEntryId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, creator, mediaEntryId);
     }
 }

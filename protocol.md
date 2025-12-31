@@ -70,3 +70,9 @@
 
 - DB-Tests aufsetzen
 - UserDao-Tests implementieren
+
+### 31.12.2025 1,5h
+
+- RatingDao-Tests implementieren
+- MediaEntryDao-Tests implementieren
+- kleine Fixes bei der MediaEntry-Suche

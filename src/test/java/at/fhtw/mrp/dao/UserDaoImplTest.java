@@ -19,6 +19,10 @@ import org.junit.jupiter.migrationsupport.rules.EnableRuleMigrationSupport;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Verschiedene Tests für {@link UserDaoImpl} welche die verschiedenen Funktionen aufruft,
+ * und sie so weit testet, dass zumindest das SQL dahinter mit Postgres funktioniert, via In-Memory-DB.
+ */
 @EnableRuleMigrationSupport
 class UserDaoImplTest extends AbstractDBTest {
 

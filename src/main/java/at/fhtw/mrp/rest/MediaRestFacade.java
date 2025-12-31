@@ -11,7 +11,9 @@ import at.fhtw.mrp.rest.server.PathParam;
 import at.fhtw.mrp.rest.server.QueryParam;
 import at.fhtw.mrp.rest.server.REST;
 import at.fhtw.mrp.rest.server.Response;
-import at.fhtw.mrp.service.*;
+import at.fhtw.mrp.service.CDI;
+import at.fhtw.mrp.service.MediaService;
+import at.fhtw.mrp.service.RatingService;
 
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class MediaRestFacade extends AbstractRestFacade {
                                                      @QueryParam("mediaType") String mediaType,
                                                      @QueryParam("releaseYear") Integer releaseYear,
                                                      @QueryParam("ageRestriction") Integer ageRestriction,
-                                                     @QueryParam("rating") Integer rating,
+                                                     @QueryParam("rating") Short rating,
                                                      @QueryParam("sortBy") String sortBy) {
         return mediaService.searchMediaEntries(title, genre, mediaType,
                 releaseYear, ageRestriction, rating, sortBy);

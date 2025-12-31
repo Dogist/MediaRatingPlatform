@@ -14,7 +14,7 @@ public interface MediaEntryDao {
                                               String mediaType,
                                               Integer releaseYear,
                                               Integer ageRestriction,
-                                              Integer rating,
+                                              Short rating,
                                               String sortBy);
 
     List<MediaEntryEntity> getMediaEntriesFavoritedByUser(Long userId);

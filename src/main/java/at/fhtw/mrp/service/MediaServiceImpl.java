@@ -33,9 +33,9 @@ public class MediaServiceImpl implements MediaService {
                                                      String mediaType,
                                                      Integer releaseYear,
                                                      Integer ageRestriction,
-                                                     Integer rating,
+                                                     Short rating,
                                                      String sortBy) {
-        if (sortBy != null && !Strings.CI.equalsAny(sortBy, "title", "genre", "mediaType", "releaseYear", "ageRestriction", "rating", "score")) {
+        if (sortBy != null && !Strings.CI.equalsAny(sortBy, "title", "genre", "mediaType", "releaseYear", "ageRestriction", "score")) {
             throw new InvalidInputException("Es kann nicht nach \"" + sortBy + "\" sortiert werden.");
         }
 

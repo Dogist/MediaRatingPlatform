@@ -91,6 +91,7 @@ public class RatingDaoImpl implements RatingDao {
                     cw.commitTransaction();
                     rating.setId(ratingId);
                     rating.setTimestamp(timestamp.toLocalDateTime());
+                    rating.setLikedByUsers(new ArrayList<>());
                     return rating;
                 }
             }
