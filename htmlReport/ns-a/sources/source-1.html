@@ -1,0 +1,298 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > BearerAuthServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">at.fhtw.mrp.service</a>
+</div>
+
+<h1>Coverage Summary for Class: BearerAuthServiceImpl (at.fhtw.mrp.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BearerAuthServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    68,8%
+  </span>
+  <span class="absValue">
+    (11/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    89,7%
+  </span>
+  <span class="absValue">
+    (35/39)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">BearerAuthServiceImpl$AuthToken</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (2/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    31,2%
+  </span>
+  <span class="absValue">
+    (5/16)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (6/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    42,3%
+  </span>
+  <span class="absValue">
+    (11/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72,7%
+  </span>
+  <span class="absValue">
+    (40/55)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package at.fhtw.mrp.service;
+&nbsp;
+&nbsp;import at.fhtw.mrp.dao.UserDao;
+&nbsp;import at.fhtw.mrp.dto.UserAuthDTO;
+&nbsp;import at.fhtw.mrp.entity.UserEntity;
+&nbsp;import at.fhtw.mrp.exceptions.InvalidInputException;
+&nbsp;
+&nbsp;import java.time.LocalDateTime;
+&nbsp;import java.util.*;
+&nbsp;import java.util.concurrent.locks.Lock;
+&nbsp;import java.util.concurrent.locks.ReadWriteLock;
+&nbsp;import java.util.concurrent.locks.ReentrantReadWriteLock;
+&nbsp;
+&nbsp;
+&nbsp;public class BearerAuthServiceImpl implements AuthService {
+&nbsp;    /**
+&nbsp;     * Auth-Token Lifetime in Minuten.
+&nbsp;     */
+&nbsp;    public static final int TOKEN_LIFETIME = 60;
+&nbsp;
+&nbsp;    private final UserDao userDao;
+<b class="fc">&nbsp;    private static final List&lt;AuthToken&gt; activeAuthTokens = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;    private static final Set&lt;String&gt; currentBearerTokens = new HashSet&lt;&gt;();</b>
+<b class="fc">&nbsp;    private static final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();</b>
+&nbsp;
+<b class="fc">&nbsp;    public BearerAuthServiceImpl(UserDao userDao) {</b>
+<b class="fc">&nbsp;        this.userDao = userDao;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String loginUser(UserAuthDTO userAuth) throws InvalidInputException {
+<b class="pc">&nbsp;        if (userAuth == null) {</b>
+<b class="nc">&nbsp;            throw new InvalidInputException(&quot;Die Benutzerdaten sind unvollständig.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        UserEntity user = userDao.getUserByUsername(userAuth.username());</b>
+&nbsp;
+<b class="pc">&nbsp;        if (user != null &amp;&amp; HashUtil.checkHashedPassword(user.getPassword(), userAuth.password())) {</b>
+<b class="fc">&nbsp;            Lock lock = readWriteLock.writeLock();</b>
+<b class="fc">&nbsp;            lock.lock();</b>
+<b class="fc">&nbsp;            String token = UUID.randomUUID().toString();</b>
+<b class="pc">&nbsp;            while (currentBearerTokens.contains(token)) {</b>
+<b class="nc">&nbsp;                token = UUID.randomUUID().toString();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            currentBearerTokens.add(token);</b>
+<b class="fc">&nbsp;            activeAuthTokens.add(new AuthToken(</b>
+&nbsp;                    token,
+<b class="fc">&nbsp;                    userAuth.username(),</b>
+<b class="fc">&nbsp;                    LocalDateTime.now().plusMinutes(TOKEN_LIFETIME)));</b>
+<b class="fc">&nbsp;            lock.unlock();</b>
+<b class="fc">&nbsp;            return token;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        throw new InvalidInputException(&quot;Der angegebene Benutzer konnte nicht angemeldet werden.&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String checkAuthToken(String token) {
+<b class="fc">&nbsp;        String foundUser = null;</b>
+<b class="fc">&nbsp;        Lock readLock = readWriteLock.readLock();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            readLock.lock();</b>
+<b class="fc">&nbsp;            if (!currentBearerTokens.contains(token)) {</b>
+<b class="fc">&nbsp;                return null;</b>
+&nbsp;            }
+&nbsp;        } finally {
+<b class="fc">&nbsp;            readLock.unlock();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Lock writeLock = readWriteLock.writeLock();</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            writeLock.lock();</b>
+<b class="fc">&nbsp;            for (Iterator&lt;AuthToken&gt; iterator = activeAuthTokens.iterator(); iterator.hasNext(); ) {</b>
+<b class="fc">&nbsp;                AuthToken activeAuthToken = iterator.next();</b>
+<b class="pc">&nbsp;                if (activeAuthToken.expiration.isBefore(LocalDateTime.now())) {</b>
+<b class="nc">&nbsp;                    iterator.remove();</b>
+<b class="nc">&nbsp;                    currentBearerTokens.remove(activeAuthToken.token);</b>
+<b class="pc">&nbsp;                } else if (activeAuthToken.token.equals(token)) {</b>
+<b class="fc">&nbsp;                    foundUser = activeAuthToken.username;</b>
+&nbsp;                    // Token erweitern
+<b class="fc">&nbsp;                    activeAuthToken.setExpiration(LocalDateTime.now().plusMinutes(TOKEN_LIFETIME));</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } finally {
+<b class="fc">&nbsp;            writeLock.unlock();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return foundUser;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static final class AuthToken {
+&nbsp;        private final String token;
+&nbsp;        private final String username;
+&nbsp;        private LocalDateTime expiration;
+&nbsp;
+<b class="fc">&nbsp;        private AuthToken(String token, String username, LocalDateTime expiration) {</b>
+<b class="fc">&nbsp;            this.token = token;</b>
+<b class="fc">&nbsp;            this.username = username;</b>
+<b class="fc">&nbsp;            this.expiration = expiration;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public String getToken() {
+<b class="nc">&nbsp;            return token;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public String getUsername() {
+<b class="nc">&nbsp;            return username;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public LocalDateTime getExpiration() {
+<b class="nc">&nbsp;            return expiration;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public void setExpiration(LocalDateTime expiration) {
+<b class="fc">&nbsp;            this.expiration = expiration;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        @Override
+&nbsp;        public boolean equals(Object obj) {
+<b class="nc">&nbsp;            if (obj == this) return true;</b>
+<b class="nc">&nbsp;            if (obj == null || obj.getClass() != this.getClass()) return false;</b>
+<b class="nc">&nbsp;            var that = (AuthToken) obj;</b>
+<b class="nc">&nbsp;            return Objects.equals(this.token, that.token) &amp;&amp;</b>
+<b class="nc">&nbsp;                    Objects.equals(this.username, that.username) &amp;&amp;</b>
+<b class="nc">&nbsp;                    Objects.equals(this.expiration, that.expiration);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        @Override
+&nbsp;        public int hashCode() {
+<b class="nc">&nbsp;            return Objects.hash(token, username, expiration);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        @Override
+&nbsp;        public String toString() {
+<b class="nc">&nbsp;            return &quot;AuthToken[&quot; +</b>
+&nbsp;                    &quot;token=&quot; + token + &quot;, &quot; +
+&nbsp;                    &quot;username=&quot; + username + &quot;, &quot; +
+&nbsp;                    &quot;expiration=&quot; + expiration + &#39;]&#39;;
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-01-12 12:39</div>
+</div>
+</body>
+</html>

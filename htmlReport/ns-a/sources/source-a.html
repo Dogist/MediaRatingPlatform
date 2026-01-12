@@ -1,0 +1,103 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MediaService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">at.fhtw.mrp.service</a>
+</div>
+
+<h1>Coverage Summary for Class: MediaService (at.fhtw.mrp.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">MediaService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package at.fhtw.mrp.service;
+&nbsp;
+&nbsp;import at.fhtw.mrp.dto.MediaEntryInDTO;
+&nbsp;import at.fhtw.mrp.dto.MediaEntryOutDTO;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface MediaService {
+&nbsp;
+&nbsp;    List&lt;MediaEntryOutDTO&gt; searchMediaEntries(String title,
+&nbsp;                                              String genre,
+&nbsp;                                              String mediaType,
+&nbsp;                                              Integer releaseYear,
+&nbsp;                                              Integer ageRestriction,
+&nbsp;                                              Short rating,
+&nbsp;                                              String sortBy);
+&nbsp;
+&nbsp;    MediaEntryOutDTO getMediaEntry(Long mediaEntryId);
+&nbsp;
+&nbsp;    MediaEntryOutDTO createMediaEntry(MediaEntryInDTO mediaEntry);
+&nbsp;
+&nbsp;    void updateMediaEntry(Long mediaEntryId, MediaEntryInDTO mediaEntry);
+&nbsp;
+&nbsp;    void deleteMediaEntry(Long mediaEntryId);
+&nbsp;
+&nbsp;    void favoriteMediaEntry(Long mediaEntryId);
+&nbsp;
+&nbsp;    void unfavoriteMediaEntry(Long mediaEntryId);
+&nbsp;
+&nbsp;    List&lt;MediaEntryOutDTO&gt; getMediaEntriesFavoritedByUser(Long userId);
+&nbsp;
+&nbsp;    List&lt;MediaEntryOutDTO&gt; getRecommendationsForUserByGenre(Long userId);
+&nbsp;
+&nbsp;    List&lt;MediaEntryOutDTO&gt; getRecommendationsForUserByContent(Long userId);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-01-12 12:39</div>
+</div>
+</body>
+</html>

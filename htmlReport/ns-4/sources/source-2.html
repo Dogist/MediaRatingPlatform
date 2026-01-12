@@ -1,0 +1,204 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MediaEntryOutDTO</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">at.fhtw.mrp.dto</a>
+</div>
+
+<h1>Coverage Summary for Class: MediaEntryOutDTO (at.fhtw.mrp.dto)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MediaEntryOutDTO</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/28)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package at.fhtw.mrp.dto;
+&nbsp;
+&nbsp;import at.fhtw.mrp.entity.MediaEntryEntity;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class MediaEntryOutDTO {
+&nbsp;    private Long id;
+&nbsp;    private String mediaType;
+&nbsp;    private String title;
+&nbsp;    private String description;
+&nbsp;    private Integer releaseYear;
+&nbsp;    private List&lt;String&gt; genres;
+&nbsp;    private Integer ageRestriction;
+&nbsp;    private String creator;
+&nbsp;    private Double score;
+&nbsp;
+<b class="nc">&nbsp;    public MediaEntryOutDTO() {</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public MediaEntryOutDTO(MediaEntryEntity mediaEntry) {</b>
+<b class="nc">&nbsp;        this.id = mediaEntry.getId();</b>
+<b class="nc">&nbsp;        this.mediaType = mediaEntry.getMediaType().name();</b>
+<b class="nc">&nbsp;        this.title = mediaEntry.getTitle();</b>
+<b class="nc">&nbsp;        this.description = mediaEntry.getDescription();</b>
+<b class="nc">&nbsp;        this.releaseYear = mediaEntry.getReleaseYear();</b>
+<b class="nc">&nbsp;        this.genres = mediaEntry.getGenres();</b>
+<b class="nc">&nbsp;        this.ageRestriction = mediaEntry.getAgeRestriction();</b>
+<b class="nc">&nbsp;        this.creator = mediaEntry.getCreator().getUsername();</b>
+<b class="nc">&nbsp;        this.score = mediaEntry.getAverageRating();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getId() {
+<b class="nc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(Long id) {
+<b class="nc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getMediaType() {
+<b class="nc">&nbsp;        return mediaType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setMediaType(String mediaType) {
+<b class="nc">&nbsp;        this.mediaType = mediaType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getTitle() {
+<b class="nc">&nbsp;        return title;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setTitle(String title) {
+<b class="nc">&nbsp;        this.title = title;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getDescription() {
+<b class="nc">&nbsp;        return description;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDescription(String description) {
+<b class="nc">&nbsp;        this.description = description;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Integer getReleaseYear() {
+<b class="nc">&nbsp;        return releaseYear;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setReleaseYear(Integer releaseYear) {
+<b class="nc">&nbsp;        this.releaseYear = releaseYear;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;String&gt; getGenres() {
+<b class="nc">&nbsp;        return genres;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setGenres(List&lt;String&gt; genres) {
+<b class="nc">&nbsp;        this.genres = genres;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Integer getAgeRestriction() {
+<b class="nc">&nbsp;        return ageRestriction;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setAgeRestriction(Integer ageRestriction) {
+<b class="nc">&nbsp;        this.ageRestriction = ageRestriction;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCreator() {
+<b class="nc">&nbsp;        return creator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCreator(String creator) {
+<b class="nc">&nbsp;        this.creator = creator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Double getScore() {
+<b class="nc">&nbsp;        return score;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-01-12 12:39</div>
+</div>
+</body>
+</html>

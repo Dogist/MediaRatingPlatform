@@ -1,0 +1,389 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MediaServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">at.fhtw.mrp.service</a>
+</div>
+
+<h1>Coverage Summary for Class: MediaServiceImpl (at.fhtw.mrp.service)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MediaServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    11,8%
+  </span>
+  <span class="absValue">
+    (2/17)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3%
+  </span>
+  <span class="absValue">
+    (3/99)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">MediaServiceImpl$ScoredMediaEntry</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">MediaServiceImpl$ScoreHolder</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    10,5%
+  </span>
+  <span class="absValue">
+    (2/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/22)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3%
+  </span>
+  <span class="absValue">
+    (3/101)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package at.fhtw.mrp.service;
+&nbsp;
+&nbsp;import at.fhtw.mrp.dao.MediaEntryDao;
+&nbsp;import at.fhtw.mrp.dto.MediaEntryInDTO;
+&nbsp;import at.fhtw.mrp.dto.MediaEntryOutDTO;
+&nbsp;import at.fhtw.mrp.dto.MediaEntryType;
+&nbsp;import at.fhtw.mrp.entity.MediaEntryEntity;
+&nbsp;import at.fhtw.mrp.entity.RatingEntity;
+&nbsp;import at.fhtw.mrp.entity.UserEntity;
+&nbsp;import at.fhtw.mrp.exceptions.InvalidInputException;
+&nbsp;import at.fhtw.mrp.exceptions.NotFoundException;
+&nbsp;import at.fhtw.mrp.exceptions.UnauthorizedException;
+&nbsp;import org.apache.commons.lang3.Strings;
+&nbsp;
+&nbsp;import java.util.Comparator;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;import java.util.stream.Stream;
+&nbsp;
+<b class="fc">&nbsp;public class MediaServiceImpl implements MediaService {</b>
+&nbsp;
+&nbsp;    private final MediaEntryDao mediaEntryDao;
+&nbsp;
+<b class="fc">&nbsp;    public MediaServiceImpl(MediaEntryDao mediaEntryDao) {</b>
+<b class="fc">&nbsp;        this.mediaEntryDao = mediaEntryDao;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;MediaEntryOutDTO&gt; searchMediaEntries(String title,
+&nbsp;                                                     String genre,
+&nbsp;                                                     String mediaType,
+&nbsp;                                                     Integer releaseYear,
+&nbsp;                                                     Integer ageRestriction,
+&nbsp;                                                     Short rating,
+&nbsp;                                                     String sortBy) {
+<b class="nc">&nbsp;        if (sortBy != null &amp;&amp; !Strings.CI.equalsAny(sortBy, &quot;title&quot;, &quot;genre&quot;, &quot;mediaType&quot;, &quot;releaseYear&quot;, &quot;ageRestriction&quot;, &quot;score&quot;)) {</b>
+<b class="nc">&nbsp;            throw new InvalidInputException(&quot;Es kann nicht nach \&quot;&quot; + sortBy + &quot;\&quot; sortiert werden.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return mediaEntryDao.searchMediaEntries(title,</b>
+&nbsp;                        genre,
+&nbsp;                        mediaType,
+&nbsp;                        releaseYear,
+&nbsp;                        ageRestriction,
+&nbsp;                        rating,
+<b class="nc">&nbsp;                        sortBy).stream()</b>
+<b class="nc">&nbsp;                .map(MediaEntryOutDTO::new)</b>
+<b class="nc">&nbsp;                .toList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public MediaEntryOutDTO getMediaEntry(Long mediaEntryId) {
+<b class="nc">&nbsp;        ValidationUtil.validateEntityId(mediaEntryId, &quot;MediaEntry&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        MediaEntryEntity mediaEntryEntity = mediaEntryDao.getMediaEntry(mediaEntryId);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (mediaEntryEntity == null) {</b>
+<b class="nc">&nbsp;            throw new NotFoundException(&quot;Dieser MediaEntry kann nicht gefunden werden.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return new MediaEntryOutDTO(mediaEntryEntity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public MediaEntryOutDTO createMediaEntry(MediaEntryInDTO mediaEntry) {
+&nbsp;
+<b class="nc">&nbsp;        MediaEntryEntity mediaEntryEntity = new MediaEntryEntity(</b>
+<b class="nc">&nbsp;                MediaEntryType.parse(mediaEntry.mediaType()),</b>
+<b class="nc">&nbsp;                mediaEntry.title(), mediaEntry.description(),</b>
+<b class="nc">&nbsp;                mediaEntry.releaseYear(), mediaEntry.genres(),</b>
+<b class="nc">&nbsp;                mediaEntry.ageRestriction(),</b>
+<b class="nc">&nbsp;                UserSessionService.getUserSession());</b>
+&nbsp;
+<b class="nc">&nbsp;        mediaEntryEntity = mediaEntryDao.createMediaEntry(mediaEntryEntity);</b>
+&nbsp;
+<b class="nc">&nbsp;        return new MediaEntryOutDTO(mediaEntryEntity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void updateMediaEntry(Long mediaEntryId, MediaEntryInDTO mediaEntry) {
+<b class="nc">&nbsp;        MediaEntryEntity mediaEntryEntity = getMediaEntryEntityAndValidateUser(mediaEntryId);</b>
+&nbsp;
+<b class="nc">&nbsp;        mediaEntryEntity.setMediaType(MediaEntryType.parse(mediaEntry.mediaType()));</b>
+<b class="nc">&nbsp;        mediaEntryEntity.setTitle(mediaEntry.title());</b>
+<b class="nc">&nbsp;        mediaEntryEntity.setDescription(mediaEntry.description());</b>
+<b class="nc">&nbsp;        mediaEntryEntity.setReleaseYear(mediaEntry.releaseYear());</b>
+<b class="nc">&nbsp;        mediaEntryEntity.setGenres(mediaEntry.genres());</b>
+<b class="nc">&nbsp;        mediaEntryEntity.setAgeRestriction(mediaEntry.ageRestriction());</b>
+&nbsp;
+<b class="nc">&nbsp;        mediaEntryDao.updateMediaEntry(mediaEntryEntity);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteMediaEntry(Long mediaEntryId) {
+<b class="nc">&nbsp;        getMediaEntryEntityAndValidateUser(mediaEntryId);</b>
+&nbsp;
+<b class="nc">&nbsp;        mediaEntryDao.deleteMediaEntry(mediaEntryId);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void favoriteMediaEntry(Long mediaEntryId) {
+<b class="nc">&nbsp;        ValidationUtil.validateEntityId(mediaEntryId, &quot;MediaEntry&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        UserEntity currentUser = UserSessionService.getUserSession();</b>
+<b class="nc">&nbsp;        MediaEntryEntity mediaEntry = mediaEntryDao.getMediaEntry(mediaEntryId);</b>
+<b class="nc">&nbsp;        if (mediaEntry == null) {</b>
+<b class="nc">&nbsp;            throw new NotFoundException(&quot;Dieser MediaEntry existiert nicht.&quot;);</b>
+<b class="nc">&nbsp;        } else if (mediaEntry.getUsersFavorited().contains(currentUser)) {</b>
+<b class="nc">&nbsp;            throw new InvalidInputException(&quot;Dieser MediaEntry ist bereits favorisiert.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        mediaEntryDao.setMediaEntryFavorite(mediaEntry.getId(), currentUser.getId());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void unfavoriteMediaEntry(Long mediaEntryId) {
+<b class="nc">&nbsp;        ValidationUtil.validateEntityId(mediaEntryId, &quot;MediaEntry&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        UserEntity currentUser = UserSessionService.getUserSession();</b>
+<b class="nc">&nbsp;        MediaEntryEntity mediaEntry = mediaEntryDao.getMediaEntry(mediaEntryId);</b>
+<b class="nc">&nbsp;        if (mediaEntry == null) {</b>
+<b class="nc">&nbsp;            throw new NotFoundException(&quot;Dieser MediaEntry existiert nicht.&quot;);</b>
+<b class="nc">&nbsp;        } else if (!mediaEntry.getUsersFavorited().contains(currentUser)) {</b>
+<b class="nc">&nbsp;            throw new InvalidInputException(&quot;Dieser MediaEntry war nicht favorisiert.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        mediaEntryDao.removeMediaEntryFavorite(mediaEntry.getId(), currentUser.getId());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;MediaEntryOutDTO&gt; getMediaEntriesFavoritedByUser(Long userId) {
+<b class="nc">&nbsp;        ValidationUtil.validateEntityId(userId, &quot;User&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        return mediaEntryDao.getMediaEntriesFavoritedByUser(userId)</b>
+<b class="nc">&nbsp;                .stream()</b>
+<b class="nc">&nbsp;                .map(MediaEntryOutDTO::new)</b>
+<b class="nc">&nbsp;                .toList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;MediaEntryOutDTO&gt; getRecommendationsForUserByGenre(Long userId) {
+<b class="nc">&nbsp;        ValidationUtil.validateEntityId(userId, &quot;User&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;MediaEntryEntity&gt; ratedEntries = mediaEntryDao.getMediaEntriesByUser(userId, true);</b>
+<b class="nc">&nbsp;        List&lt;MediaEntryEntity&gt; unratedEntries = mediaEntryDao.getMediaEntriesByUser(userId, false);</b>
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, Long&gt; summedGenreScores = ratedEntries.stream()</b>
+<b class="nc">&nbsp;                .flatMap(mediaEntryEntity -&gt; {</b>
+<b class="nc">&nbsp;                    RatingEntity ownRating = mediaEntryEntity.getRatings().stream()</b>
+<b class="nc">&nbsp;                            .filter(r -&gt; Objects.equals(r.getCreator().getId(), userId))</b>
+<b class="nc">&nbsp;                            .findFirst().orElse(null);</b>
+<b class="nc">&nbsp;                    assert ownRating != null;</b>
+<b class="nc">&nbsp;                    return mediaEntryEntity.getGenres().stream().map(genre -&gt; new ScoreHolder(genre, ownRating.getRating()));</b>
+<b class="nc">&nbsp;                }).collect(Collectors.groupingBy(ScoreHolder::key,</b>
+<b class="nc">&nbsp;                        Collectors.&lt;ScoreHolder&gt;summingLong(ScoreHolder::score)));</b>
+&nbsp;
+<b class="nc">&nbsp;        return filterAndSortMediaEntriesByScore(unratedEntries.stream()</b>
+<b class="nc">&nbsp;                .map(m -&gt; new ScoredMediaEntry(m, m.getGenres().stream()</b>
+<b class="nc">&nbsp;                        .mapToLong(g -&gt; summedGenreScores.getOrDefault(g, 0L))</b>
+<b class="nc">&nbsp;                        .sum())));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;MediaEntryOutDTO&gt; getRecommendationsForUserByContent(Long userId) {
+<b class="nc">&nbsp;        ValidationUtil.validateEntityId(userId, &quot;User&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;MediaEntryEntity&gt; ratedEntries = mediaEntryDao.getMediaEntriesByUser(userId, true);</b>
+<b class="nc">&nbsp;        List&lt;MediaEntryEntity&gt; unratedEntries = mediaEntryDao.getMediaEntriesByUser(userId, false);</b>
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;String, Long&gt; genreScores = ratedEntries.stream().flatMap(m -&gt; m.getGenres().stream())</b>
+<b class="nc">&nbsp;                .collect(Collectors.groupingBy(genre -&gt; genre, Collectors.counting()));</b>
+&nbsp;
+<b class="nc">&nbsp;        Map&lt;MediaEntryType, Long&gt; typeScores = ratedEntries.stream()</b>
+<b class="nc">&nbsp;                .collect(Collectors.groupingBy(MediaEntryEntity::getMediaType, Collectors.counting()));</b>
+<b class="nc">&nbsp;        Map&lt;Integer, Long&gt; ageScores = ratedEntries.stream()</b>
+<b class="nc">&nbsp;                .collect(Collectors.groupingBy(MediaEntryEntity::getAgeRestriction,</b>
+<b class="nc">&nbsp;                        Collectors.counting()));</b>
+&nbsp;
+<b class="nc">&nbsp;        return filterAndSortMediaEntriesByScore(unratedEntries.stream()</b>
+<b class="nc">&nbsp;                .map(m -&gt; new ScoredMediaEntry(m,</b>
+<b class="nc">&nbsp;                        m.getGenres().stream()</b>
+<b class="nc">&nbsp;                                .mapToLong(g -&gt; genreScores.getOrDefault(g, 0L))</b>
+<b class="nc">&nbsp;                                .sum()</b>
+<b class="nc">&nbsp;                                + typeScores.getOrDefault(m.getMediaType(), 0L)</b>
+<b class="nc">&nbsp;                                + ageScores.getOrDefault(m.getAgeRestriction(), 0L)))</b>
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;    private static List&lt;MediaEntryOutDTO&gt; filterAndSortMediaEntriesByScore(Stream&lt;ScoredMediaEntry&gt; entries) {
+<b class="nc">&nbsp;        return entries</b>
+<b class="nc">&nbsp;                .filter(m -&gt; m.score() &gt; 0)</b>
+<b class="nc">&nbsp;                .sorted(Comparator.comparingLong(MediaServiceImpl.ScoredMediaEntry::score))</b>
+<b class="nc">&nbsp;                .map(rm -&gt; new MediaEntryOutDTO(rm.mediaEntry()))</b>
+<b class="nc">&nbsp;                .toList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private MediaEntryEntity getMediaEntryEntityAndValidateUser(Long mediaEntryId) {
+<b class="nc">&nbsp;        ValidationUtil.validateEntityId(mediaEntryId, &quot;MediaEntry&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        UserEntity currentUser = UserSessionService.getUserSession();</b>
+<b class="nc">&nbsp;        MediaEntryEntity mediaEntryEntity = mediaEntryDao.getMediaEntry(mediaEntryId);</b>
+<b class="nc">&nbsp;        if (mediaEntryEntity == null) {</b>
+<b class="nc">&nbsp;            throw new NotFoundException(&quot;Dieser MediaEntry existiert nicht.&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!Objects.equals(mediaEntryEntity.getCreator(), currentUser)) {</b>
+<b class="nc">&nbsp;            throw new UnauthorizedException(&quot;Der aktuelle Benutzer darf diesen MediaEntry nicht löschen.&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return mediaEntryEntity;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;    private record ScoreHolder(String key, int score) {</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    private record ScoredMediaEntry(MediaEntryEntity mediaEntry, long score) {</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-01-12 12:39</div>
+</div>
+</body>
+</html>

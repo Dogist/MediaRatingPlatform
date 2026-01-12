@@ -1,0 +1,399 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > MediaEntryDaoImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">at.fhtw.mrp.dao</a>
+</div>
+
+<h1>Coverage Summary for Class: MediaEntryDaoImpl (at.fhtw.mrp.dao)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MediaEntryDaoImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    56,5%
+  </span>
+  <span class="absValue">
+    (26/46)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93%
+  </span>
+  <span class="absValue">
+    (133/143)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package at.fhtw.mrp.dao;
+&nbsp;
+&nbsp;import at.fhtw.mrp.dao.general.ConnectionWrapper;
+&nbsp;import at.fhtw.mrp.dao.general.DataAccessException;
+&nbsp;import at.fhtw.mrp.dao.general.DatabaseManager;
+&nbsp;import at.fhtw.mrp.dto.MediaEntryType;
+&nbsp;import at.fhtw.mrp.entity.MediaEntryEntity;
+&nbsp;import at.fhtw.mrp.entity.RatingEntity;
+&nbsp;import org.apache.commons.lang3.StringUtils;
+&nbsp;
+&nbsp;import java.sql.PreparedStatement;
+&nbsp;import java.sql.ResultSet;
+&nbsp;import java.sql.SQLException;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;public class MediaEntryDaoImpl implements MediaEntryDao {
+&nbsp;    private final DatabaseManager databaseManager;
+&nbsp;    private final UserDao userDao;
+&nbsp;    private final RatingDao ratingDao;
+&nbsp;
+<b class="fc">&nbsp;    public MediaEntryDaoImpl(DatabaseManager databaseManager, UserDao userDao, RatingDao ratingDao) {</b>
+<b class="fc">&nbsp;        this.databaseManager = databaseManager;</b>
+<b class="fc">&nbsp;        this.userDao = userDao;</b>
+<b class="fc">&nbsp;        this.ratingDao = ratingDao;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;MediaEntryEntity&gt; getMediaEntriesByUser(Long userId, boolean ratedByUser) {
+&nbsp;        String query;
+<b class="fc">&nbsp;        if (ratedByUser) {</b>
+<b class="fc">&nbsp;            query = &quot;SELECT media_entry.* FROM media_entry JOIN rating ON media_entry.media_entry_id = rating.media_entry_id WHERE rating.user_id = ?&quot;;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            query = &quot;SELECT media_entry.* FROM media_entry WHERE NOT exists(SELECT rating_id &quot; +</b>
+&nbsp;                    &quot;FROM rating WHERE rating.media_entry_id = media_entry.media_entry_id AND rating.user_id = ?)&quot;;
+&nbsp;        }
+<b class="pc">&nbsp;        try (ConnectionWrapper cw = databaseManager.getConnection();</b>
+<b class="fc">&nbsp;             PreparedStatement preparedStatement = cw.prepareStatement(query)) {</b>
+&nbsp;
+<b class="fc">&nbsp;            preparedStatement.setLong(1, userId);</b>
+&nbsp;
+<b class="fc">&nbsp;            ResultSet rs = preparedStatement.executeQuery();</b>
+<b class="fc">&nbsp;            List&lt;MediaEntryEntity&gt; mediaEntries = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;            while (rs.next()) {</b>
+<b class="fc">&nbsp;                mediaEntries.add(parseResultSet(rs));</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return mediaEntries;</b>
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            throw new DataAccessException(&quot;Es gab einen Fehler beim Holen von MediaEntries.&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;MediaEntryEntity&gt; searchMediaEntries(String title,
+&nbsp;                                                     String genre,
+&nbsp;                                                     String mediaType,
+&nbsp;                                                     Integer releaseYear,
+&nbsp;                                                     Integer ageRestriction,
+&nbsp;                                                     Short rating,
+&nbsp;                                                     String sortBy) {
+<b class="fc">&nbsp;        StringBuilder sqlString = new StringBuilder(&quot;&quot;&quot;</b>
+&nbsp;                SELECT media_entry.*, AVG(r.rating) as score
+&nbsp;                FROM media_entry
+&nbsp;                        LEFT JOIN rating r on (media_entry.media_entry_id = r.media_entry_id)
+&nbsp;                WHERE\s&quot;&quot;&quot;);
+&nbsp;
+<b class="fc">&nbsp;        List&lt;String&gt; whereClauses = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        List&lt;Object&gt; params = new ArrayList&lt;&gt;();</b>
+<b class="pc">&nbsp;        if (StringUtils.isNotBlank(title)) {</b>
+<b class="fc">&nbsp;            whereClauses.add(&quot;LOWER(TITLE) LIKE LOWER(?)&quot;);</b>
+<b class="fc">&nbsp;            params.add(&#39;%&#39; + title + &#39;%&#39;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (StringUtils.isNotBlank(genre)) {</b>
+<b class="fc">&nbsp;            whereClauses.add(&quot;? = ANY (GENRES)&quot;);</b>
+<b class="fc">&nbsp;            params.add(genre.toLowerCase());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (StringUtils.isNotBlank(mediaType)) {</b>
+<b class="fc">&nbsp;            whereClauses.add(&quot;MEDIA_TYPE = ?&quot;);</b>
+<b class="fc">&nbsp;            params.add(mediaType.toUpperCase());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (Objects.nonNull(releaseYear)) {</b>
+<b class="fc">&nbsp;            whereClauses.add(&quot;RELEASE_YEAR = ?&quot;);</b>
+<b class="fc">&nbsp;            params.add(releaseYear);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (Objects.nonNull(ageRestriction)) {</b>
+<b class="fc">&nbsp;            whereClauses.add(&quot;AGE_RESTRICTION = ?&quot;);</b>
+<b class="fc">&nbsp;            params.add(ageRestriction);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        sqlString.append(String.join(&quot; AND &quot;, whereClauses));</b>
+&nbsp;
+<b class="fc">&nbsp;        sqlString.append(&quot; GROUP BY media_entry.media_entry_id&quot;);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (Objects.nonNull(rating)) {</b>
+<b class="fc">&nbsp;            sqlString.append(&quot; HAVING AVG(r.rating) &gt;= ? &quot;);</b>
+<b class="fc">&nbsp;            params.add(rating);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (StringUtils.isNotBlank(sortBy)) {</b>
+<b class="fc">&nbsp;            if (sortBy.equals(&quot;score&quot;)) {</b>
+<b class="fc">&nbsp;                sqlString.append(&quot; ORDER BY &quot;).append(sortBy).append(&quot; DESC&quot;);</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                sqlString.append(&quot; ORDER BY &quot;).append(sortBy);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        try (ConnectionWrapper cw = databaseManager.getConnection();</b>
+<b class="fc">&nbsp;             PreparedStatement preparedStatement = cw.prepareStatement(sqlString.toString())) {</b>
+&nbsp;
+<b class="fc">&nbsp;            for (int i = 0; i &lt; params.size(); i++) {</b>
+<b class="fc">&nbsp;                Object param = params.get(i);</b>
+<b class="fc">&nbsp;                preparedStatement.setObject(i + 1, param);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            List&lt;MediaEntryEntity&gt; mediaEntries = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;            try (ResultSet rs = preparedStatement.executeQuery()) {</b>
+<b class="fc">&nbsp;                while (rs.next()) {</b>
+<b class="fc">&nbsp;                    mediaEntries.add(parseResultSet(rs));</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            return mediaEntries;</b>
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            throw new DataAccessException(&quot;Es gab einen Fehler beim Suchen von MediaEntries.&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;MediaEntryEntity&gt; getMediaEntriesFavoritedByUser(Long userId) {
+<b class="pc">&nbsp;        try (ConnectionWrapper cw = databaseManager.getConnection();</b>
+<b class="fc">&nbsp;             PreparedStatement preparedStatement = cw.prepareStatement(&quot;SELECT media_entry.* FROM media_entry JOIN user_favorite_media ON media_entry.media_entry_id = user_favorite_media.media_entry_id WHERE user_id = ?&quot;)) {</b>
+<b class="fc">&nbsp;            preparedStatement.setLong(1, userId);</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;MediaEntryEntity&gt; mediaEntries = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;            try (ResultSet rs = preparedStatement.executeQuery()) {</b>
+<b class="fc">&nbsp;                while (rs.next()) {</b>
+<b class="fc">&nbsp;                    mediaEntries.add(parseResultSet(rs));</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            return mediaEntries;</b>
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            throw new DataAccessException(&quot;Es gab einen Fehler beim Holen von MediaEntries.&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public MediaEntryEntity createMediaEntry(MediaEntryEntity mediaEntry) {
+<b class="fc">&nbsp;        try (ConnectionWrapper cw = databaseManager.getConnection();</b>
+<b class="fc">&nbsp;             PreparedStatement mainStatement = cw.prepareStatement(&quot;INSERT INTO media_entry(media_type, title, description, creator, release_year, genres, age_restriction) VALUES (?, ?, ?, ?, ?, ?, ?)&quot;)) {</b>
+<b class="fc">&nbsp;            mainStatement.setString(1, mediaEntry.getMediaType().name());</b>
+<b class="fc">&nbsp;            mainStatement.setString(2, mediaEntry.getTitle());</b>
+<b class="fc">&nbsp;            mainStatement.setString(3, mediaEntry.getDescription());</b>
+<b class="fc">&nbsp;            mainStatement.setLong(4, mediaEntry.getCreator().getId());</b>
+<b class="fc">&nbsp;            mainStatement.setInt(5, mediaEntry.getReleaseYear());</b>
+<b class="fc">&nbsp;            mainStatement.setArray(6,</b>
+<b class="fc">&nbsp;                    cw.createStringArray(mediaEntry.getGenres()</b>
+<b class="fc">&nbsp;                            .stream()</b>
+<b class="fc">&nbsp;                            .map(String::toLowerCase)</b>
+<b class="fc">&nbsp;                            .toArray(String[]::new)));</b>
+<b class="fc">&nbsp;            mainStatement.setInt(7, mediaEntry.getAgeRestriction());</b>
+&nbsp;
+<b class="fc">&nbsp;            mainStatement.executeUpdate();</b>
+<b class="fc">&nbsp;            try (ResultSet generatedKeys = mainStatement.getGeneratedKeys()) {</b>
+<b class="pc">&nbsp;                if (generatedKeys.next()) {</b>
+<b class="fc">&nbsp;                    long mediaEntryId = generatedKeys.getLong(1);</b>
+<b class="fc">&nbsp;                    cw.commitTransaction();</b>
+<b class="fc">&nbsp;                    mediaEntry.setId(mediaEntryId);</b>
+<b class="fc">&nbsp;                    return mediaEntry;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            throw new DataAccessException(&quot;Es gab einen Fehler beim Erstellen des MediaEntry.&quot;, e);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public MediaEntryEntity getMediaEntry(Long mediaEntryId) {
+<b class="pc">&nbsp;        try (ConnectionWrapper cw = databaseManager.getConnection();</b>
+<b class="fc">&nbsp;             PreparedStatement preparedStatement = cw.prepareStatement(&quot;SELECT * FROM media_entry WHERE media_entry.media_entry_id = ?&quot;)) {</b>
+<b class="fc">&nbsp;            preparedStatement.setLong(1, mediaEntryId);</b>
+&nbsp;
+<b class="fc">&nbsp;            try (ResultSet rs = preparedStatement.executeQuery()) {</b>
+<b class="fc">&nbsp;                if (rs.next()) {</b>
+<b class="fc">&nbsp;                    return parseResultSet(rs);</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            throw new DataAccessException(&quot;Es gab einen Fehler beim Holen des MediaEntry.&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void updateMediaEntry(MediaEntryEntity mediaEntry) {
+<b class="fc">&nbsp;        try (ConnectionWrapper cw = databaseManager.getConnection();</b>
+<b class="fc">&nbsp;             PreparedStatement statement = cw.prepareStatement(&quot;UPDATE media_entry SET media_type = ?, title = ?, description = ?, release_year = ?, genres = ?, age_restriction = ? WHERE media_entry_id = ?&quot;)) {</b>
+<b class="fc">&nbsp;            statement.setString(1, mediaEntry.getMediaType().name());</b>
+<b class="fc">&nbsp;            statement.setString(2, mediaEntry.getTitle());</b>
+<b class="fc">&nbsp;            statement.setString(3, mediaEntry.getDescription());</b>
+<b class="fc">&nbsp;            statement.setInt(4, mediaEntry.getReleaseYear());</b>
+<b class="fc">&nbsp;            statement.setArray(5,</b>
+<b class="fc">&nbsp;                    cw.createStringArray(mediaEntry.getGenres()</b>
+<b class="fc">&nbsp;                            .stream()</b>
+<b class="fc">&nbsp;                            .map(String::toLowerCase)</b>
+<b class="fc">&nbsp;                            .toArray(String[]::new)));</b>
+<b class="fc">&nbsp;            statement.setInt(6, mediaEntry.getAgeRestriction());</b>
+<b class="fc">&nbsp;            statement.setLong(7, mediaEntry.getId());</b>
+&nbsp;
+<b class="fc">&nbsp;            statement.executeUpdate();</b>
+<b class="fc">&nbsp;            cw.commitTransaction();</b>
+&nbsp;
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            throw new DataAccessException(&quot;Es gab einen Fehler beim Updaten des MediaEntry.&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean deleteMediaEntry(long mediaEntryId) {
+<b class="pc">&nbsp;        try (ConnectionWrapper cw = databaseManager.getConnection();</b>
+<b class="fc">&nbsp;             PreparedStatement statement = cw.prepareStatement(&quot;DELETE FROM media_entry WHERE media_entry_id = ?&quot;)) {</b>
+<b class="fc">&nbsp;            statement.setLong(1, mediaEntryId);</b>
+&nbsp;
+<b class="fc">&nbsp;            int i = statement.executeUpdate();</b>
+<b class="fc">&nbsp;            cw.commitTransaction();</b>
+<b class="pc">&nbsp;            return i &gt; 0;</b>
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            throw new DataAccessException(&quot;Es gab einen Fehler beim Löschen des MediaEntry.&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void setMediaEntryFavorite(Long mediaEntryId, Long userEntityId) {
+<b class="fc">&nbsp;        try (ConnectionWrapper cw = databaseManager.getConnection();</b>
+<b class="fc">&nbsp;             PreparedStatement statement = cw.prepareStatement(&quot;INSERT INTO user_favorite_media(media_entry_id, user_id) VALUES (?, ?)&quot;)) {</b>
+<b class="fc">&nbsp;            statement.setLong(1, mediaEntryId);</b>
+<b class="fc">&nbsp;            statement.setLong(2, userEntityId);</b>
+&nbsp;
+<b class="fc">&nbsp;            statement.executeUpdate();</b>
+<b class="fc">&nbsp;            cw.commitTransaction();</b>
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            throw new DataAccessException(&quot;Es gab einen Fehler beim Favorisieren des MediaEntry.&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean removeMediaEntryFavorite(Long mediaEntryId, Long userEntityId) {
+<b class="pc">&nbsp;        try (ConnectionWrapper cw = databaseManager.getConnection();</b>
+<b class="fc">&nbsp;             PreparedStatement statement = cw.prepareStatement(&quot;DELETE FROM user_favorite_media WHERE media_entry_id = ? AND user_id = ?&quot;)) {</b>
+<b class="fc">&nbsp;            statement.setLong(1, mediaEntryId);</b>
+<b class="fc">&nbsp;            statement.setLong(2, userEntityId);</b>
+&nbsp;
+<b class="fc">&nbsp;            int i = statement.executeUpdate();</b>
+<b class="fc">&nbsp;            cw.commitTransaction();</b>
+<b class="pc">&nbsp;            return i &gt; 0;</b>
+&nbsp;        } catch (SQLException e) {
+<b class="nc">&nbsp;            throw new DataAccessException(&quot;Es gab einen Fehler beim Unfavorisieren des MediaEntry.&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private MediaEntryEntity parseResultSet(ResultSet rs) throws SQLException {
+<b class="fc">&nbsp;        List&lt;RatingEntity&gt; ratings = ratingDao.getRatingsForMediaEntry(rs.getLong(&quot;media_entry_id&quot;));</b>
+<b class="fc">&nbsp;        Double averageRating = null;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            averageRating = ratings.stream().mapToInt(RatingEntity::getRating).average().orElseThrow();</b>
+&nbsp;        } catch (NoSuchElementException e) {
+&nbsp;            // do nothing
+&nbsp;        }
+<b class="fc">&nbsp;        return new MediaEntryEntity(rs.getLong(&quot;media_entry_id&quot;),</b>
+<b class="fc">&nbsp;                MediaEntryType.parse(rs.getString(&quot;media_type&quot;)),</b>
+<b class="fc">&nbsp;                rs.getString(&quot;title&quot;),</b>
+<b class="fc">&nbsp;                rs.getString(&quot;description&quot;),</b>
+<b class="fc">&nbsp;                rs.getInt(&quot;release_year&quot;),</b>
+<b class="fc">&nbsp;                Arrays.asList((String[]) rs.getArray(&quot;genres&quot;).getArray()),</b>
+<b class="fc">&nbsp;                rs.getInt(&quot;age_restriction&quot;),</b>
+<b class="fc">&nbsp;                userDao.getUserById(rs.getLong(&quot;creator&quot;)),</b>
+<b class="fc">&nbsp;                userDao.getUsersByFavoriteMedia(rs.getLong(&quot;media_entry_id&quot;)),</b>
+&nbsp;                ratings,
+&nbsp;                averageRating
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-01-12 12:39</div>
+</div>
+</body>
+</html>

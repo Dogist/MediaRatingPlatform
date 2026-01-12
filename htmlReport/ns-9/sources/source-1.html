@@ -1,0 +1,190 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > RequestMapping</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">at.fhtw.mrp.rest.server</a>
+</div>
+
+<h1>Coverage Summary for Class: RequestMapping (at.fhtw.mrp.rest.server)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RequestMapping</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/25)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package at.fhtw.mrp.rest.server;
+&nbsp;
+&nbsp;import at.fhtw.mrp.rest.http.HttpMethod;
+&nbsp;
+&nbsp;import java.lang.reflect.Method;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.regex.Pattern;
+&nbsp;
+<b class="nc">&nbsp;public final class RequestMapping {</b>
+&nbsp;    private final String path;
+&nbsp;    private final HttpMethod httpMethod;
+&nbsp;    private final Method method;
+&nbsp;    private final Pattern pattern;
+&nbsp;    private final boolean authRequired;
+&nbsp;
+<b class="nc">&nbsp;    public RequestMapping(String path, HttpMethod httpMethod, Method method, boolean authRequired) {</b>
+<b class="nc">&nbsp;        assert path != null;</b>
+<b class="nc">&nbsp;        assert httpMethod != null;</b>
+<b class="nc">&nbsp;        assert method != null;</b>
+&nbsp;
+<b class="nc">&nbsp;        this.path = path;</b>
+<b class="nc">&nbsp;        this.method = method;</b>
+<b class="nc">&nbsp;        this.httpMethod = httpMethod;</b>
+<b class="nc">&nbsp;        this.authRequired = authRequired;</b>
+<b class="nc">&nbsp;        String regexPath = path.replaceAll(&quot;\\{(\\w+)}&quot;, &quot;(?&lt;$1&gt;\\\\w+)&quot;);</b>
+<b class="nc">&nbsp;        this.pattern = Pattern.compile(regexPath);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String path() {
+<b class="nc">&nbsp;        return path;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public HttpMethod httpMethod() {
+<b class="nc">&nbsp;        return httpMethod;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Method method() {
+<b class="nc">&nbsp;        return method;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Pattern pattern() {
+<b class="nc">&nbsp;        return pattern;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean isAuthRequired() {
+<b class="nc">&nbsp;        return authRequired;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="nc">&nbsp;        if (obj == this) return true;</b>
+<b class="nc">&nbsp;        if (obj == null || obj.getClass() != this.getClass()) return false;</b>
+<b class="nc">&nbsp;        var that = (RequestMapping) obj;</b>
+<b class="nc">&nbsp;        return Objects.equals(this.path, that.path) &amp;&amp;</b>
+<b class="nc">&nbsp;                Objects.equals(this.httpMethod, that.httpMethod) &amp;&amp;</b>
+<b class="nc">&nbsp;                Objects.equals(this.method, that.method) &amp;&amp;</b>
+<b class="nc">&nbsp;                Objects.equals(this.pattern, that.pattern);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="nc">&nbsp;        return Objects.hash(path, httpMethod, method, pattern);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return &quot;RequestMapping[&quot; +</b>
+&nbsp;                &quot;path=&quot; + path + &quot;, &quot; +
+&nbsp;                &quot;httpMethod=&quot; + httpMethod + &quot;, &quot; +
+&nbsp;                &quot;method=&quot; + method + &quot;, &quot; +
+&nbsp;                &quot;pattern=&quot; + pattern + &#39;]&#39;;
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-01-12 12:39</div>
+</div>
+</body>
+</html>

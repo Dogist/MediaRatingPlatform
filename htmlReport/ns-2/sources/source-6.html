@@ -1,0 +1,102 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserDao</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">at.fhtw.mrp.dao</a>
+</div>
+
+<h1>Coverage Summary for Class: UserDao (at.fhtw.mrp.dao)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">UserDao$MockitoMock$APUfJIy8</td>
+  </tr>
+  <tr>
+    <td class="name">UserDao$MockitoMock$APUfJIy8$auxiliary$icupwCVD</td>
+  </tr>
+  <tr>
+    <td class="name">UserDao$MockitoMock$APUfJIy8$auxiliary$vo4fTj2q</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package at.fhtw.mrp.dao;
+&nbsp;
+&nbsp;import at.fhtw.mrp.dao.general.DataConflictException;
+&nbsp;import at.fhtw.mrp.dto.UserProfileUpdateDTO;
+&nbsp;import at.fhtw.mrp.entity.UserEntity;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public interface UserDao {
+&nbsp;    void createUser(String username, String passwordHash) throws DataConflictException;
+&nbsp;
+&nbsp;    UserEntity getUserById(Long userId);
+&nbsp;
+&nbsp;    void hydrateUserStatistics(UserEntity user);
+&nbsp;
+&nbsp;    UserEntity getUserByUsername(String username);
+&nbsp;
+&nbsp;    List&lt;UserEntity&gt; getUsersByFavoriteMedia(long mediaEntryId);
+&nbsp;
+&nbsp;    List&lt;UserEntity&gt; getUsersByLikedRating(long ratingId);
+&nbsp;
+&nbsp;    boolean updateUser(Long userId, UserProfileUpdateDTO userEntity);
+&nbsp;
+&nbsp;    List&lt;UserEntity&gt; getUsersByRatingCount();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-01-12 12:39</div>
+</div>
+</body>
+</html>

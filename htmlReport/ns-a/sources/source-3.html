@@ -1,0 +1,149 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > HashUtil</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">at.fhtw.mrp.service</a>
+</div>
+
+<h1>Coverage Summary for Class: HashUtil (at.fhtw.mrp.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HashUtil</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66,7%
+  </span>
+  <span class="absValue">
+    (2/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84,2%
+  </span>
+  <span class="absValue">
+    (16/19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package at.fhtw.mrp.service;
+&nbsp;
+&nbsp;import javax.crypto.SecretKeyFactory;
+&nbsp;import javax.crypto.spec.PBEKeySpec;
+&nbsp;import java.security.NoSuchAlgorithmException;
+&nbsp;import java.security.SecureRandom;
+&nbsp;import java.security.spec.InvalidKeySpecException;
+&nbsp;import java.security.spec.KeySpec;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.Base64;
+&nbsp;
+<b class="nc">&nbsp;public class HashUtil {</b>
+&nbsp;
+&nbsp;    public static String generateHashedPassword(String password) {
+&nbsp;        try {
+<b class="fc">&nbsp;            SecureRandom random = new SecureRandom();</b>
+<b class="fc">&nbsp;            byte[] salt = new byte[16];</b>
+<b class="fc">&nbsp;            random.nextBytes(salt);</b>
+<b class="fc">&nbsp;            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, 65536, 128);</b>
+<b class="fc">&nbsp;            SecretKeyFactory f = SecretKeyFactory.getInstance(&quot;PBKDF2WithHmacSHA1&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            byte[] hash = f.generateSecret(spec).getEncoded();</b>
+<b class="fc">&nbsp;            Base64.Encoder enc = Base64.getEncoder();</b>
+<b class="fc">&nbsp;            return enc.encodeToString(hash) + &quot;:&quot; + enc.encodeToString(salt);</b>
+&nbsp;        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Es gibt einen Fehler beim Hashen des Passworts&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static boolean checkHashedPassword(String hashedPassword, String passwordToCheck) {
+&nbsp;        try {
+<b class="fc">&nbsp;            Base64.Decoder dec = Base64.getDecoder();</b>
+<b class="fc">&nbsp;            String[] split = hashedPassword.split(&quot;:&quot;);</b>
+<b class="fc">&nbsp;            byte[] hash = dec.decode(split[0]);</b>
+<b class="fc">&nbsp;            byte[] salt = dec.decode(split[1]);</b>
+<b class="fc">&nbsp;            KeySpec spec = new PBEKeySpec(passwordToCheck.toCharArray(), salt, 65536, 128);</b>
+<b class="fc">&nbsp;            SecretKeyFactory f = SecretKeyFactory.getInstance(&quot;PBKDF2WithHmacSHA1&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;            byte[] newHash = f.generateSecret(spec).getEncoded();</b>
+<b class="fc">&nbsp;            return Arrays.equals(newHash, hash);</b>
+&nbsp;        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Es gibt einen Fehler beim Prüfen des Passworts&quot;, e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-01-12 12:39</div>
+</div>
+</body>
+</html>
