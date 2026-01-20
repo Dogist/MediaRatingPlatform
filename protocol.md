@@ -32,7 +32,7 @@ Zwei weitere wichtige Design-Entscheidungen waren die folgenden:
 2. Docker-Compose für PostgreSQL einrichten
 3. io.zonky.test.embedded-postgres verwenden für In-Memory DB beim Testen.
 
-## Unit-Testing Strategie und Abdeckung
+## Unit-Testing Strategie
 
 Hauptsächlich wurden Stellen im Code getestet, welche mehr Buisness-Logik haben,
 um zu kontrollieren, dass diese korrekt funktionieren.
@@ -44,7 +44,6 @@ wichtig ist.
 Zusätzlich wurden auch noch die DB-Schnittstellen genauer getestet, da diese leicht übersehen werden können, da sie oft
 keine Kompilierungsfehler verursachen.
 
-TODO Test-Abdeckung?
 
 ## SOLID Prinzipien + Beispiele
 
