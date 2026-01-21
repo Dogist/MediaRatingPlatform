@@ -148,3 +148,7 @@ https://github.com/Dogist/MediaRatingPlatform
 ### 12.01.2026 1h
 
 - Protokoll-Erweiterungen
+
+### 21.01.2026 1,25h
+
+- User Integration Test implementiert
