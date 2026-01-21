@@ -34,7 +34,7 @@ Zwei weitere wichtige Design-Entscheidungen waren die folgenden:
 
 ## Unit-Testing Strategie
 
-Hauptsächlich wurden Stellen im Code getestet, welche mehr Buisness-Logik haben,
+Hauptsächlich wurden Stellen im Code getestet, welche mehr Business-Logik haben,
 um zu kontrollieren, dass diese korrekt funktionieren.
 
 Deswegen wurden die DTOs bei welchen Validierungen möglich ist, getestet.
@@ -44,6 +44,9 @@ wichtig ist.
 Zusätzlich wurden auch noch die DB-Schnittstellen genauer getestet, da diese leicht übersehen werden können, da sie oft
 keine Kompilierungsfehler verursachen.
 
+Als letztes gibt es noch ein paar IntegrationTests, welche vor allem auch die REST-Facade testen.
+Hierfür gibt es 2 Tests in der IntegrationTest.java und die gesamte Postman-Collection im Repo,
+welche einen großen Teil der APIs testen.
 
 ## SOLID Prinzipien + Beispiele
 
@@ -149,6 +152,7 @@ https://github.com/Dogist/MediaRatingPlatform
 
 - Protokoll-Erweiterungen
 
-### 21.01.2026 1,25h
+### 21.01.2026 2,5h
 
 - User Integration Test implementiert
+- MediaEntry Integration Test implementiert

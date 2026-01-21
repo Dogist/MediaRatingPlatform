@@ -26,12 +26,35 @@ public class AbstractDBTest implements DatabasePreparer {
     @Rule
     public PreparedDbRule db = EmbeddedPostgresRules.preparedDatabase(this);
 
-
-    public void setup() throws SQLException {
+    /**
+     * Methode, welche die Mock-DB im CDI vorbereitet.
+     * <p>
+     * Diese Methode muss zusammen mit {@link #setupMockConnection(DatabaseManager)} ()} verwendet werden, damit sie funktioniert.
+     * Wird im Integration-Test benötigt, da ein Starten des Servers pro Test nicht funktioniert, aber die DB pro Test initialisiert wird.
+     */
+    public static DatabaseManager setupMockCDI() {
         DatabaseManager databaseManager = Mockito.mock(DatabaseManager.class);
-        Mockito.when(databaseManager.getConnection()).thenAnswer(invocation -> new ConnectionWrapper(db.getTestDatabase().getConnection()));
 
         initCDI(databaseManager);
+
+        return databaseManager;
+    }
+
+    /**
+     * Methode welche die Mock-Postgres-Connections vorbereitet.
+     * Diese Methode muss zusammen mit {@link #setupMockCDI()} verwendet werden, damit sie funktioniert.
+     */
+    public void setupMockConnection(DatabaseManager databaseManager) {
+        Mockito.reset(databaseManager);
+        Mockito.when(databaseManager.getConnection()).thenAnswer(invocation -> new ConnectionWrapper(db.getTestDatabase().getConnection()));
+    }
+
+    /**
+     * Methode welche CDI und Mock-Postgres-DB komplett aufsetzt.
+     */
+    public void setup() throws SQLException {
+        DatabaseManager databaseManager = setupMockCDI();
+        setupMockConnection(databaseManager);
     }
 
     private static void initCDI(DatabaseManager databaseManager) {

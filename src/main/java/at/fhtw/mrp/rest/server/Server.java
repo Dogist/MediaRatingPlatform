@@ -9,8 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Server {
+
+    private HttpServer server = null;
+
     public void start() throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 10);
+        server = HttpServer.create(new InetSocketAddress(8080), 10);
 
         List<AbstractRestFacade> facades = new ArrayList<>();
         facades.add(new UserRestFacade());
@@ -22,5 +25,11 @@ public class Server {
                 server.createContext(facade.getBasePath(), facade));
 
         server.start();
+    }
+
+    public void stop() {
+        if (server != null) {
+            server.stop(0);
+        }
     }
 }
