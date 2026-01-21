@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > RatingService</title>
+  <title>Coverage Report > AuthService</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,14 +22,14 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">at.fhtw.mrp.service</a>
 </div>
 
-<h1>Coverage Summary for Class: RatingService (at.fhtw.mrp.service)</h1>
+<h1>Coverage Summary for Class: AuthService (at.fhtw.mrp.service)</h1>
 
 <table class="coverageStats">
 <tr>
   <th class="name">Class</th>
 </tr>
 <tr>
-  <td class="name">RatingService</td>
+  <td class="name">AuthService</td>
 </tr>
 
 </table>
@@ -41,27 +41,28 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package at.fhtw.mrp.service;
 &nbsp;
-&nbsp;import at.fhtw.mrp.dto.RatingInDTO;
-&nbsp;import at.fhtw.mrp.dto.RatingOutDTO;
+&nbsp;import at.fhtw.mrp.dto.UserAuthDTO;
+&nbsp;import at.fhtw.mrp.exceptions.InvalidInputException;
 &nbsp;
-&nbsp;import java.util.List;
+&nbsp;/**
+&nbsp; * Service für die Authentifizierung des Users.
+&nbsp; */
+&nbsp;public interface AuthService {
+&nbsp;    /**
+&nbsp;     * MMethode welche versucht das übergebene {@link UserAuthDTO} zu authentifizieren.
+&nbsp;     *
+&nbsp;     * @param userAuth welcher authentifiziert wird.
+&nbsp;     * @return String Bearer-Token, welcher für die Authentifizierung verwendet werden kann.
+&nbsp;     */
+&nbsp;    String loginUser(UserAuthDTO userAuth) throws InvalidInputException;
 &nbsp;
-&nbsp;public interface RatingService {
-&nbsp;    List&lt;RatingOutDTO&gt; getRatingsForUser(Long userId);
-&nbsp;
-&nbsp;    RatingOutDTO getRating(Long ratingId);
-&nbsp;
-&nbsp;    RatingOutDTO createRating(Long mediaId, RatingInDTO rating);
-&nbsp;
-&nbsp;    void updateRating(Long ratingId, RatingInDTO rating);
-&nbsp;
-&nbsp;    void deleteRating(Long ratingId);
-&nbsp;
-&nbsp;    void likeRating(Long ratingId);
-&nbsp;
-&nbsp;    void unlikeRating(Long ratingId);
-&nbsp;
-&nbsp;    void confirmRating(Long ratingId);
+&nbsp;    /**
+&nbsp;     * Methode welche einen Bearer-Token überprüft, und den User zurückgibt, wenn erfolgreich.
+&nbsp;     *
+&nbsp;     * @param token welche geprüft wird.
+&nbsp;     * @return Benutzername des Users welcher authentifiziert wurde.
+&nbsp;     */
+&nbsp;    String checkAuthToken(String token);
 &nbsp;}
 </code>
 </pre>
@@ -86,7 +87,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-01-12 12:39</div>
+    <div style="float:right;">generated on 2026-01-21 14:32</div>
 </div>
 </body>
 </html>

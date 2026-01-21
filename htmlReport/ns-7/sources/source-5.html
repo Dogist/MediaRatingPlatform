@@ -48,18 +48,18 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">UserRestFacade</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    66,7%
   </span>
   <span class="absValue">
-    (0/9)
+    (6/9)
   </span>
 </td>
 <td class="coverageStat">
@@ -72,10 +72,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    61,9%
   </span>
   <span class="absValue">
-    (0/21)
+    (13/21)
   </span>
 </td>
 </tr>
@@ -107,25 +107,25 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;public class UserRestFacade extends AbstractRestFacade {
 &nbsp;
-<b class="nc">&nbsp;    public static final Logger LOGGER = Logger.getLogger(UserRestFacade.class.getSimpleName());</b>
+<b class="fc">&nbsp;    public static final Logger LOGGER = Logger.getLogger(UserRestFacade.class.getSimpleName());</b>
 &nbsp;    private final UserService userService;
 &nbsp;    private final MediaService mediaService;
 &nbsp;    private final RatingService ratingService;
 &nbsp;    private final AuthService authService;
 &nbsp;
 &nbsp;    public UserRestFacade() {
-<b class="nc">&nbsp;        super(&quot;users&quot;);</b>
-<b class="nc">&nbsp;        userService = CDI.INSTANCE.getService(UserService.class);</b>
-<b class="nc">&nbsp;        mediaService = CDI.INSTANCE.getService(MediaService.class);</b>
-<b class="nc">&nbsp;        ratingService = CDI.INSTANCE.getService(RatingService.class);</b>
-<b class="nc">&nbsp;        authService = CDI.INSTANCE.getService(AuthService.class);</b>
+<b class="fc">&nbsp;        super(&quot;users&quot;);</b>
+<b class="fc">&nbsp;        userService = CDI.INSTANCE.getService(UserService.class);</b>
+<b class="fc">&nbsp;        mediaService = CDI.INSTANCE.getService(MediaService.class);</b>
+<b class="fc">&nbsp;        ratingService = CDI.INSTANCE.getService(RatingService.class);</b>
+<b class="fc">&nbsp;        authService = CDI.INSTANCE.getService(AuthService.class);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @REST(path = &quot;register&quot;, method = HttpMethod.POST, authRequired = false)
 &nbsp;    public Response registerUser(UserAuthDTO user) {
 &nbsp;        try {
-<b class="nc">&nbsp;            userService.createUser(user);</b>
-<b class="nc">&nbsp;            return new Response(HttpStatus.CREATED, ContentType.PLAIN_TEXT, &quot;Der Benutzer wurde erfolgreich registriert.&quot;);</b>
+<b class="fc">&nbsp;            userService.createUser(user);</b>
+<b class="fc">&nbsp;            return new Response(HttpStatus.CREATED, ContentType.PLAIN_TEXT, &quot;Der Benutzer wurde erfolgreich registriert.&quot;);</b>
 &nbsp;        } catch (DataConflictException e) {
 <b class="nc">&nbsp;            return new Response(HttpStatus.CONFLICT, ContentType.PLAIN_TEXT, &quot;Dieser Benutzer existiert bereits.&quot;);</b>
 &nbsp;        }
@@ -133,19 +133,19 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    @REST(path = &quot;login&quot;, method = HttpMethod.POST, authRequired = false)
 &nbsp;    public Response loginUser(UserAuthDTO user) {
-<b class="nc">&nbsp;        String token = authService.loginUser(user);</b>
-<b class="nc">&nbsp;        LOGGER.log(Level.FINE, &quot;{} hat sich eingeloggt.&quot;, user.username());</b>
-<b class="nc">&nbsp;        return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, token);</b>
+<b class="fc">&nbsp;        String token = authService.loginUser(user);</b>
+<b class="fc">&nbsp;        LOGGER.log(Level.FINE, &quot;{} hat sich eingeloggt.&quot;, user.username());</b>
+<b class="fc">&nbsp;        return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, token);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @REST(path = &quot;{id}/profile&quot;, method = HttpMethod.GET)
 &nbsp;    public UserProfileDTO getProfile(@PathParam(&quot;id&quot;) Long userId) {
-<b class="nc">&nbsp;        return userService.getUserProfile(userId);</b>
+<b class="fc">&nbsp;        return userService.getUserProfile(userId);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @REST(path = &quot;{id}/profile&quot;, method = HttpMethod.PUT)
 &nbsp;    public void updateProfile(@PathParam(&quot;id&quot;) Long userId, UserProfileUpdateDTO userProfile) {
-<b class="nc">&nbsp;        userService.updateUserProfile(userId, userProfile);</b>
+<b class="fc">&nbsp;        userService.updateUserProfile(userId, userProfile);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @REST(path = &quot;{id}/ratings&quot;, method = HttpMethod.GET)
@@ -191,7 +191,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-01-12 12:39</div>
+    <div style="float:right;">generated on 2026-01-21 14:32</div>
 </div>
 </body>
 </html>

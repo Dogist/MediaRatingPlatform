@@ -44,26 +44,26 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">MediaEntryOutDTO</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    52,6%
   </span>
   <span class="absValue">
-    (0/19)
+    (10/19)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    67,9%
   </span>
   <span class="absValue">
-    (0/28)
+    (19/28)
   </span>
 </td>
 </tr>
@@ -95,20 +95,20 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;    public MediaEntryOutDTO() {</b>
 &nbsp;    }
 &nbsp;
-<b class="nc">&nbsp;    public MediaEntryOutDTO(MediaEntryEntity mediaEntry) {</b>
-<b class="nc">&nbsp;        this.id = mediaEntry.getId();</b>
-<b class="nc">&nbsp;        this.mediaType = mediaEntry.getMediaType().name();</b>
-<b class="nc">&nbsp;        this.title = mediaEntry.getTitle();</b>
-<b class="nc">&nbsp;        this.description = mediaEntry.getDescription();</b>
-<b class="nc">&nbsp;        this.releaseYear = mediaEntry.getReleaseYear();</b>
-<b class="nc">&nbsp;        this.genres = mediaEntry.getGenres();</b>
-<b class="nc">&nbsp;        this.ageRestriction = mediaEntry.getAgeRestriction();</b>
-<b class="nc">&nbsp;        this.creator = mediaEntry.getCreator().getUsername();</b>
-<b class="nc">&nbsp;        this.score = mediaEntry.getAverageRating();</b>
+<b class="fc">&nbsp;    public MediaEntryOutDTO(MediaEntryEntity mediaEntry) {</b>
+<b class="fc">&nbsp;        this.id = mediaEntry.getId();</b>
+<b class="fc">&nbsp;        this.mediaType = mediaEntry.getMediaType().name();</b>
+<b class="fc">&nbsp;        this.title = mediaEntry.getTitle();</b>
+<b class="fc">&nbsp;        this.description = mediaEntry.getDescription();</b>
+<b class="fc">&nbsp;        this.releaseYear = mediaEntry.getReleaseYear();</b>
+<b class="fc">&nbsp;        this.genres = mediaEntry.getGenres();</b>
+<b class="fc">&nbsp;        this.ageRestriction = mediaEntry.getAgeRestriction();</b>
+<b class="fc">&nbsp;        this.creator = mediaEntry.getCreator().getUsername();</b>
+<b class="fc">&nbsp;        this.score = mediaEntry.getAverageRating();</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public Long getId() {
-<b class="nc">&nbsp;        return id;</b>
+<b class="fc">&nbsp;        return id;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setId(Long id) {
@@ -116,7 +116,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public String getMediaType() {
-<b class="nc">&nbsp;        return mediaType;</b>
+<b class="fc">&nbsp;        return mediaType;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setMediaType(String mediaType) {
@@ -124,7 +124,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public String getTitle() {
-<b class="nc">&nbsp;        return title;</b>
+<b class="fc">&nbsp;        return title;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setTitle(String title) {
@@ -132,7 +132,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public String getDescription() {
-<b class="nc">&nbsp;        return description;</b>
+<b class="fc">&nbsp;        return description;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setDescription(String description) {
@@ -140,7 +140,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public Integer getReleaseYear() {
-<b class="nc">&nbsp;        return releaseYear;</b>
+<b class="fc">&nbsp;        return releaseYear;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setReleaseYear(Integer releaseYear) {
@@ -148,7 +148,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public List&lt;String&gt; getGenres() {
-<b class="nc">&nbsp;        return genres;</b>
+<b class="fc">&nbsp;        return genres;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setGenres(List&lt;String&gt; genres) {
@@ -156,7 +156,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public Integer getAgeRestriction() {
-<b class="nc">&nbsp;        return ageRestriction;</b>
+<b class="fc">&nbsp;        return ageRestriction;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setAgeRestriction(Integer ageRestriction) {
@@ -164,7 +164,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public String getCreator() {
-<b class="nc">&nbsp;        return creator;</b>
+<b class="fc">&nbsp;        return creator;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public void setCreator(String creator) {
@@ -172,7 +172,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public Double getScore() {
-<b class="nc">&nbsp;        return score;</b>
+<b class="fc">&nbsp;        return score;</b>
 &nbsp;    }
 &nbsp;}
 </code>
@@ -198,7 +198,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-01-12 12:39</div>
+    <div style="float:right;">generated on 2026-01-21 14:32</div>
 </div>
 </body>
 </html>

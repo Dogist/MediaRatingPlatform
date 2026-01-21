@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > RatingDao</title>
+  <title>Coverage Report > UserDao</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,16 +22,25 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">at.fhtw.mrp.dao</a>
 </div>
 
-<h1>Coverage Summary for Class: RatingDao (at.fhtw.mrp.dao)</h1>
+<h1>Coverage Summary for Class: UserDao (at.fhtw.mrp.dao)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
 </tr>
+  <tr>
+    <td class="name">UserDao$MockitoMock$OonEj04C</td>
+  </tr>
+  <tr>
+    <td class="name">UserDao$MockitoMock$OonEj04C$auxiliary$aGCrM8Ym</td>
+  </tr>
+  <tr>
+    <td class="name">UserDao$MockitoMock$OonEj04C$auxiliary$p1FoAFiv</td>
+  </tr>
 <tr>
-  <td class="name">RatingDao</td>
+  <td class="name"><strong>Total</strong></td>
 </tr>
-
 </table>
 
 <br/>
@@ -41,26 +50,28 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package at.fhtw.mrp.dao;
 &nbsp;
-&nbsp;import at.fhtw.mrp.entity.RatingEntity;
+&nbsp;import at.fhtw.mrp.dao.general.DataConflictException;
+&nbsp;import at.fhtw.mrp.dto.UserProfileUpdateDTO;
+&nbsp;import at.fhtw.mrp.entity.UserEntity;
 &nbsp;
 &nbsp;import java.util.List;
 &nbsp;
-&nbsp;public interface RatingDao {
-&nbsp;    List&lt;RatingEntity&gt; getRatingsForUser(Long userId);
+&nbsp;public interface UserDao {
+&nbsp;    void createUser(String username, String passwordHash) throws DataConflictException;
 &nbsp;
-&nbsp;    List&lt;RatingEntity&gt; getRatingsForMediaEntry(long mediaEntryId);
+&nbsp;    UserEntity getUserById(Long userId);
 &nbsp;
-&nbsp;    RatingEntity getRating(long ratingId);
+&nbsp;    void hydrateUserStatistics(UserEntity user);
 &nbsp;
-&nbsp;    RatingEntity createRating(RatingEntity rating);
+&nbsp;    UserEntity getUserByUsername(String username);
 &nbsp;
-&nbsp;    void updateRating(RatingEntity rating);
+&nbsp;    List&lt;UserEntity&gt; getUsersByFavoriteMedia(long mediaEntryId);
 &nbsp;
-&nbsp;    boolean deleteRating(long ratingId);
+&nbsp;    List&lt;UserEntity&gt; getUsersByLikedRating(long ratingId);
 &nbsp;
-&nbsp;    void setRatingLiked(Long ratingId, Long userId);
+&nbsp;    boolean updateUser(Long userId, UserProfileUpdateDTO userEntity);
 &nbsp;
-&nbsp;    boolean removeRatingLiked(Long ratingId, Long userId);
+&nbsp;    List&lt;UserEntity&gt; getUsersByRatingCount();
 &nbsp;}
 </code>
 </pre>
@@ -85,7 +96,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-01-12 12:39</div>
+    <div style="float:right;">generated on 2026-01-21 14:32</div>
 </div>
 </body>
 </html>

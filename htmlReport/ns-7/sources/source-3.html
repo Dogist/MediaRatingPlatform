@@ -44,26 +44,26 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">MediaRestFacade</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    44,4%
   </span>
   <span class="absValue">
-    (0/9)
+    (4/9)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    54,5%
   </span>
   <span class="absValue">
-    (0/11)
+    (6/11)
   </span>
 </td>
 </tr>
@@ -100,9 +100,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    private final RatingService ratingService;
 &nbsp;
 &nbsp;    public MediaRestFacade() {
-<b class="nc">&nbsp;        super(&quot;media&quot;);</b>
-<b class="nc">&nbsp;        mediaService = CDI.INSTANCE.getService(MediaService.class);</b>
-<b class="nc">&nbsp;        ratingService = CDI.INSTANCE.getService(RatingService.class);</b>
+<b class="fc">&nbsp;        super(&quot;media&quot;);</b>
+<b class="fc">&nbsp;        mediaService = CDI.INSTANCE.getService(MediaService.class);</b>
+<b class="fc">&nbsp;        ratingService = CDI.INSTANCE.getService(RatingService.class);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @REST(method = HttpMethod.GET)
@@ -113,13 +113,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                                                     @QueryParam(&quot;ageRestriction&quot;) Integer ageRestriction,
 &nbsp;                                                     @QueryParam(&quot;rating&quot;) Short rating,
 &nbsp;                                                     @QueryParam(&quot;sortBy&quot;) String sortBy) {
-<b class="nc">&nbsp;        return mediaService.searchMediaEntries(title, genre, mediaType,</b>
+<b class="fc">&nbsp;        return mediaService.searchMediaEntries(title, genre, mediaType,</b>
 &nbsp;                releaseYear, ageRestriction, rating, sortBy);
 &nbsp;    }
 &nbsp;
 &nbsp;    @REST(method = HttpMethod.POST)
 &nbsp;    public Response createMediaEntry(MediaEntryInDTO mediaEntry) {
-<b class="nc">&nbsp;        return new Response(HttpStatus.CREATED, ContentType.JSON, mediaService.createMediaEntry(mediaEntry));</b>
+<b class="fc">&nbsp;        return new Response(HttpStatus.CREATED, ContentType.JSON, mediaService.createMediaEntry(mediaEntry));</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @REST(path = &quot;{id}&quot;, method = HttpMethod.GET)
@@ -129,7 +129,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    @REST(path = &quot;{id}&quot;, method = HttpMethod.PUT)
 &nbsp;    public void updateMediaEntry(@PathParam(&quot;id&quot;) Long mediaId, MediaEntryInDTO mediaEntry) {
-<b class="nc">&nbsp;        mediaService.updateMediaEntry(mediaId, mediaEntry);</b>
+<b class="fc">&nbsp;        mediaService.updateMediaEntry(mediaId, mediaEntry);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @REST(path = &quot;{id}&quot;, method = HttpMethod.DELETE)
@@ -175,7 +175,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-01-12 12:39</div>
+    <div style="float:right;">generated on 2026-01-21 14:32</div>
 </div>
 </body>
 </html>

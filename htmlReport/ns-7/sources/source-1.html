@@ -48,34 +48,34 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">AbstractRestFacade</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/6)
+    (6/6)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    63,2%
   </span>
   <span class="absValue">
-    (0/68)
+    (43/68)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    77,4%
   </span>
   <span class="absValue">
-    (0/106)
+    (82/106)
   </span>
 </td>
 </tr>
@@ -123,7 +123,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp; * Request und Response Konvertierung übernimmt.
 &nbsp; */
 &nbsp;public abstract class AbstractRestFacade implements HttpHandler {
-<b class="nc">&nbsp;    public static final Logger LOGGER = Logger.getLogger(AbstractRestFacade.class.getName());</b>
+<b class="fc">&nbsp;    public static final Logger LOGGER = Logger.getLogger(AbstractRestFacade.class.getName());</b>
 &nbsp;    private static final boolean ENABLE_AUTHENTICATION = true;
 &nbsp;
 &nbsp;    private final AuthService authService;
@@ -131,39 +131,39 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    private final List&lt;RequestMapping&gt; requestMappings;
 &nbsp;    private final String basePath;
 &nbsp;
-<b class="nc">&nbsp;    public AbstractRestFacade(String basePath) {</b>
-<b class="nc">&nbsp;        authService = CDI.INSTANCE.getService(AuthService.class);</b>
-<b class="nc">&nbsp;        this.objectMapper = new ObjectMapper();</b>
-<b class="nc">&nbsp;        this.requestMappings = new ArrayList&lt;&gt;();</b>
-<b class="nc">&nbsp;        this.basePath = &quot;/api/&quot; + basePath;</b>
+<b class="fc">&nbsp;    public AbstractRestFacade(String basePath) {</b>
+<b class="fc">&nbsp;        authService = CDI.INSTANCE.getService(AuthService.class);</b>
+<b class="fc">&nbsp;        this.objectMapper = new ObjectMapper();</b>
+<b class="fc">&nbsp;        this.requestMappings = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.basePath = &quot;/api/&quot; + basePath;</b>
 &nbsp;
-<b class="nc">&nbsp;        for (Method declaredMethod : getClass().getDeclaredMethods()) {</b>
-<b class="nc">&nbsp;            if (declaredMethod.isAnnotationPresent(REST.class)) {</b>
-<b class="nc">&nbsp;                REST restA = declaredMethod.getAnnotation(REST.class);</b>
-<b class="nc">&nbsp;                requestMappings.add(new RequestMapping(</b>
-<b class="nc">&nbsp;                        StringUtils.stripEnd(getBasePath() + &quot;/&quot; + restA.path(), &quot;/&quot;),</b>
-<b class="nc">&nbsp;                        restA.method(), declaredMethod,</b>
-<b class="nc">&nbsp;                        restA.authRequired()));</b>
+<b class="fc">&nbsp;        for (Method declaredMethod : getClass().getDeclaredMethods()) {</b>
+<b class="pc">&nbsp;            if (declaredMethod.isAnnotationPresent(REST.class)) {</b>
+<b class="fc">&nbsp;                REST restA = declaredMethod.getAnnotation(REST.class);</b>
+<b class="fc">&nbsp;                requestMappings.add(new RequestMapping(</b>
+<b class="fc">&nbsp;                        StringUtils.stripEnd(getBasePath() + &quot;/&quot; + restA.path(), &quot;/&quot;),</b>
+<b class="fc">&nbsp;                        restA.method(), declaredMethod,</b>
+<b class="fc">&nbsp;                        restA.authRequired()));</b>
 &nbsp;            }
 &nbsp;        }
 &nbsp;    }
 &nbsp;
 &nbsp;    @Override
 &nbsp;    public void handle(HttpExchange exchange) throws IOException {
-<b class="nc">&nbsp;        try (exchange) {</b>
-<b class="nc">&nbsp;            boolean responseHandled = false;</b>
-<b class="nc">&nbsp;            for (RequestMapping requestMapping : requestMappings) {</b>
-<b class="nc">&nbsp;                if (exchange.getRequestMethod().equals(requestMapping.httpMethod().name())</b>
-<b class="nc">&nbsp;                        &amp;&amp; requestMapping.pattern().asMatchPredicate().test(exchange.getRequestURI().getPath())) {</b>
-<b class="nc">&nbsp;                    if (ENABLE_AUTHENTICATION &amp;&amp; requestMapping.isAuthRequired()) {</b>
-<b class="nc">&nbsp;                        String authorization = exchange.getRequestHeaders().getFirst(&quot;Authorization&quot;);</b>
-<b class="nc">&nbsp;                        String loggedInUser = null;</b>
-<b class="nc">&nbsp;                        if (authorization != null &amp;&amp; authorization.startsWith(&quot;Bearer &quot;)) {</b>
-<b class="nc">&nbsp;                            String token = StringUtils.substringAfter(authorization, &quot;Bearer &quot;);</b>
-<b class="nc">&nbsp;                            loggedInUser = authService.checkAuthToken(token);</b>
+<b class="fc">&nbsp;        try (exchange) {</b>
+<b class="fc">&nbsp;            boolean responseHandled = false;</b>
+<b class="pc">&nbsp;            for (RequestMapping requestMapping : requestMappings) {</b>
+<b class="fc">&nbsp;                if (exchange.getRequestMethod().equals(requestMapping.httpMethod().name())</b>
+<b class="fc">&nbsp;                        &amp;&amp; requestMapping.pattern().asMatchPredicate().test(exchange.getRequestURI().getPath())) {</b>
+<b class="fc">&nbsp;                    if (ENABLE_AUTHENTICATION &amp;&amp; requestMapping.isAuthRequired()) {</b>
+<b class="fc">&nbsp;                        String authorization = exchange.getRequestHeaders().getFirst(&quot;Authorization&quot;);</b>
+<b class="fc">&nbsp;                        String loggedInUser = null;</b>
+<b class="pc">&nbsp;                        if (authorization != null &amp;&amp; authorization.startsWith(&quot;Bearer &quot;)) {</b>
+<b class="fc">&nbsp;                            String token = StringUtils.substringAfter(authorization, &quot;Bearer &quot;);</b>
+<b class="fc">&nbsp;                            loggedInUser = authService.checkAuthToken(token);</b>
 &nbsp;                        }
-<b class="nc">&nbsp;                        if (loggedInUser != null) {</b>
-<b class="nc">&nbsp;                            UserSessionService.registerUserSession(loggedInUser);</b>
+<b class="pc">&nbsp;                        if (loggedInUser != null) {</b>
+<b class="fc">&nbsp;                            UserSessionService.registerUserSession(loggedInUser);</b>
 &nbsp;                        } else {
 <b class="nc">&nbsp;                            exchange.sendResponseHeaders(HttpStatus.UNAUTHORIZED.code, 0);</b>
 &nbsp;                            return;
@@ -171,11 +171,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                    }
 &nbsp;
 &nbsp;                    try {
-<b class="nc">&nbsp;                        List&lt;Object&gt; params = handleParameters(exchange, requestMapping);</b>
+<b class="fc">&nbsp;                        List&lt;Object&gt; params = handleParameters(exchange, requestMapping);</b>
 &nbsp;
-<b class="nc">&nbsp;                        Object returnVal = requestMapping.method().invoke(this, params.toArray());</b>
-<b class="nc">&nbsp;                        handleResponse(exchange, returnVal);</b>
-<b class="nc">&nbsp;                        responseHandled = true;</b>
+<b class="fc">&nbsp;                        Object returnVal = requestMapping.method().invoke(this, params.toArray());</b>
+<b class="fc">&nbsp;                        handleResponse(exchange, returnVal);</b>
+<b class="fc">&nbsp;                        responseHandled = true;</b>
 &nbsp;                        break;
 &nbsp;                    } catch (IllegalAccessException | InvocationTargetException | BaseMRPException e) {
 <b class="nc">&nbsp;                        BaseMRPException customException = null;</b>
@@ -195,71 +195,71 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                    }
 &nbsp;                }
 &nbsp;            }
-<b class="nc">&nbsp;            if (!responseHandled) {</b>
+<b class="pc">&nbsp;            if (!responseHandled) {</b>
 <b class="nc">&nbsp;                exchange.sendResponseHeaders(HttpStatus.NOT_FOUND.code, 0);</b>
 &nbsp;            }
 &nbsp;        } catch (Exception e) {
 <b class="nc">&nbsp;            LOGGER.log(Level.SEVERE, &quot;Exception: &quot;, e);</b>
 <b class="nc">&nbsp;            exchange.sendResponseHeaders(HttpStatus.INTERNAL_SERVER_ERROR.code, 0);</b>
 &nbsp;        } finally {
-<b class="nc">&nbsp;            UserSessionService.clearUserSession();</b>
+<b class="fc">&nbsp;            UserSessionService.clearUserSession();</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
 &nbsp;    private void handleResponse(HttpExchange exchange, Object returnVal) throws IOException {
-<b class="nc">&nbsp;        exchange.getResponseHeaders().add(&quot;Cache-Control&quot;, &quot;nocache&quot;);</b>
-<b class="nc">&nbsp;        if (returnVal != null) {</b>
-<b class="nc">&nbsp;            if (returnVal instanceof Response(int status, String contentType, Object content)) {</b>
-<b class="nc">&nbsp;                if (content == null) {</b>
+<b class="fc">&nbsp;        exchange.getResponseHeaders().add(&quot;Cache-Control&quot;, &quot;nocache&quot;);</b>
+<b class="fc">&nbsp;        if (returnVal != null) {</b>
+<b class="fc">&nbsp;            if (returnVal instanceof Response(int status, String contentType, Object content)) {</b>
+<b class="pc">&nbsp;                if (content == null) {</b>
 <b class="nc">&nbsp;                    exchange.sendResponseHeaders(HttpStatus.NO_CONTENT.code, -1);</b>
-<b class="nc">&nbsp;                } else if (content instanceof String) {</b>
-<b class="nc">&nbsp;                    exchange.getResponseHeaders().add(&quot;Content-Type&quot;, contentType);</b>
-<b class="nc">&nbsp;                    byte[] responseBody = ((String) content).getBytes(StandardCharsets.UTF_8);</b>
-<b class="nc">&nbsp;                    exchange.sendResponseHeaders(status, responseBody.length);</b>
-<b class="nc">&nbsp;                    exchange.getResponseBody().write(responseBody);</b>
-<b class="nc">&nbsp;                } else if (contentType.equals(ContentType.JSON.type)) {</b>
-<b class="nc">&nbsp;                    exchange.getResponseHeaders().add(&quot;Content-Type&quot;, ContentType.JSON.type);</b>
-<b class="nc">&nbsp;                    exchange.sendResponseHeaders(status, 0);</b>
-<b class="nc">&nbsp;                    objectMapper.writeValue(exchange.getResponseBody(), content);</b>
+<b class="fc">&nbsp;                } else if (content instanceof String) {</b>
+<b class="fc">&nbsp;                    exchange.getResponseHeaders().add(&quot;Content-Type&quot;, contentType);</b>
+<b class="fc">&nbsp;                    byte[] responseBody = ((String) content).getBytes(StandardCharsets.UTF_8);</b>
+<b class="fc">&nbsp;                    exchange.sendResponseHeaders(status, responseBody.length);</b>
+<b class="fc">&nbsp;                    exchange.getResponseBody().write(responseBody);</b>
+<b class="pc">&nbsp;                } else if (contentType.equals(ContentType.JSON.type)) {</b>
+<b class="fc">&nbsp;                    exchange.getResponseHeaders().add(&quot;Content-Type&quot;, ContentType.JSON.type);</b>
+<b class="fc">&nbsp;                    exchange.sendResponseHeaders(status, 0);</b>
+<b class="fc">&nbsp;                    objectMapper.writeValue(exchange.getResponseBody(), content);</b>
 &nbsp;                } else {
 <b class="nc">&nbsp;                    throw new IllegalArgumentException(&quot;Diese Kombination von Response-Content und Content-Type wird nicht unterstützt!&quot;);</b>
 &nbsp;                }
 &nbsp;            } else {
-<b class="nc">&nbsp;                exchange.getResponseHeaders().add(&quot;Content-Type&quot;, ContentType.JSON.type);</b>
-<b class="nc">&nbsp;                exchange.sendResponseHeaders(HttpStatus.OK.code, 0);</b>
-<b class="nc">&nbsp;                objectMapper.writeValue(exchange.getResponseBody(), returnVal);</b>
+<b class="fc">&nbsp;                exchange.getResponseHeaders().add(&quot;Content-Type&quot;, ContentType.JSON.type);</b>
+<b class="fc">&nbsp;                exchange.sendResponseHeaders(HttpStatus.OK.code, 0);</b>
+<b class="fc">&nbsp;                objectMapper.writeValue(exchange.getResponseBody(), returnVal);</b>
 &nbsp;            }
 &nbsp;        } else {
-<b class="nc">&nbsp;            exchange.sendResponseHeaders(HttpStatus.NO_CONTENT.code, -1);</b>
+<b class="fc">&nbsp;            exchange.sendResponseHeaders(HttpStatus.NO_CONTENT.code, -1);</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
 &nbsp;    private List&lt;Object&gt; handleParameters(HttpExchange exchange, RequestMapping requestMapping) throws IOException {
-<b class="nc">&nbsp;        List&lt;Object&gt; params = new ArrayList&lt;&gt;();</b>
-<b class="nc">&nbsp;        boolean bodyParamFound = false;</b>
-<b class="nc">&nbsp;        Parameter[] parameters = requestMapping.method().getParameters();</b>
-<b class="nc">&nbsp;        for (Parameter parameter : parameters) {</b>
-<b class="nc">&nbsp;            PathParam pathParamA = parameter.getAnnotation(PathParam.class);</b>
-<b class="nc">&nbsp;            QueryParam queryParamA = parameter.getAnnotation(QueryParam.class);</b>
-<b class="nc">&nbsp;            if (!bodyParamFound &amp;&amp; pathParamA == null &amp;&amp; queryParamA == null) {</b>
-<b class="nc">&nbsp;                try (BufferedReader br = new BufferedReader(new InputStreamReader(exchange.getRequestBody()))) {</b>
-<b class="nc">&nbsp;                    String bodyString = br.lines().collect(Collectors.joining());</b>
-<b class="nc">&nbsp;                    if (!bodyString.isEmpty()) {</b>
-<b class="nc">&nbsp;                        Object o = objectMapper.readValue(bodyString, parameter.getType());</b>
-<b class="nc">&nbsp;                        if (o instanceof Validateable) {</b>
-<b class="nc">&nbsp;                            ((Validateable) o).validate();</b>
+<b class="fc">&nbsp;        List&lt;Object&gt; params = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        boolean bodyParamFound = false;</b>
+<b class="fc">&nbsp;        Parameter[] parameters = requestMapping.method().getParameters();</b>
+<b class="fc">&nbsp;        for (Parameter parameter : parameters) {</b>
+<b class="fc">&nbsp;            PathParam pathParamA = parameter.getAnnotation(PathParam.class);</b>
+<b class="fc">&nbsp;            QueryParam queryParamA = parameter.getAnnotation(QueryParam.class);</b>
+<b class="pc">&nbsp;            if (!bodyParamFound &amp;&amp; pathParamA == null &amp;&amp; queryParamA == null) {</b>
+<b class="fc">&nbsp;                try (BufferedReader br = new BufferedReader(new InputStreamReader(exchange.getRequestBody()))) {</b>
+<b class="fc">&nbsp;                    String bodyString = br.lines().collect(Collectors.joining());</b>
+<b class="pc">&nbsp;                    if (!bodyString.isEmpty()) {</b>
+<b class="fc">&nbsp;                        Object o = objectMapper.readValue(bodyString, parameter.getType());</b>
+<b class="fc">&nbsp;                        if (o instanceof Validateable) {</b>
+<b class="fc">&nbsp;                            ((Validateable) o).validate();</b>
 &nbsp;                        }
-<b class="nc">&nbsp;                        params.add(o);</b>
+<b class="fc">&nbsp;                        params.add(o);</b>
 &nbsp;                    } else {
 <b class="nc">&nbsp;                        params.add(null);</b>
 &nbsp;                    }
 &nbsp;                }
-<b class="nc">&nbsp;            } else if (pathParamA != null) {</b>
-<b class="nc">&nbsp;                Matcher matcher = requestMapping.pattern().matcher(exchange.getRequestURI().getPath());</b>
-<b class="nc">&nbsp;                if (matcher.find()) {</b>
-<b class="nc">&nbsp;                    String p = matcher.group(pathParamA.value());</b>
-<b class="nc">&nbsp;                    if (parameter.getType().isAssignableFrom(Long.class)) {</b>
-<b class="nc">&nbsp;                        params.add(Long.parseLong(p));</b>
+<b class="fc">&nbsp;            } else if (pathParamA != null) {</b>
+<b class="fc">&nbsp;                Matcher matcher = requestMapping.pattern().matcher(exchange.getRequestURI().getPath());</b>
+<b class="pc">&nbsp;                if (matcher.find()) {</b>
+<b class="fc">&nbsp;                    String p = matcher.group(pathParamA.value());</b>
+<b class="pc">&nbsp;                    if (parameter.getType().isAssignableFrom(Long.class)) {</b>
+<b class="fc">&nbsp;                        params.add(Long.parseLong(p));</b>
 <b class="nc">&nbsp;                    } else if (parameter.getType().isAssignableFrom(Integer.class)) {</b>
 <b class="nc">&nbsp;                        params.add(Integer.parseInt(p));</b>
 <b class="nc">&nbsp;                    } else if (parameter.getType().isAssignableFrom(Short.class)) {</b>
@@ -268,32 +268,32 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;                        params.add(p);</b>
 &nbsp;                    }
 &nbsp;                }
-<b class="nc">&nbsp;            } else if (queryParamA != null) {</b>
-<b class="nc">&nbsp;                Matcher matcher = Pattern.compile(&quot;(?:^|&amp;)&quot; + queryParamA.value() + &quot;=([^&amp;]*)&quot;)</b>
-<b class="nc">&nbsp;                        .matcher(exchange.getRequestURI().getQuery());</b>
-<b class="nc">&nbsp;                if (matcher.find()) {</b>
-<b class="nc">&nbsp;                    String p = matcher.group(1);</b>
-<b class="nc">&nbsp;                    if (parameter.getType().isAssignableFrom(Long.class)) {</b>
+<b class="pc">&nbsp;            } else if (queryParamA != null) {</b>
+<b class="fc">&nbsp;                Matcher matcher = Pattern.compile(&quot;(?:^|&amp;)&quot; + queryParamA.value() + &quot;=([^&amp;]*)&quot;)</b>
+<b class="fc">&nbsp;                        .matcher(exchange.getRequestURI().getQuery());</b>
+<b class="fc">&nbsp;                if (matcher.find()) {</b>
+<b class="fc">&nbsp;                    String p = matcher.group(1);</b>
+<b class="pc">&nbsp;                    if (parameter.getType().isAssignableFrom(Long.class)) {</b>
 <b class="nc">&nbsp;                        params.add(Long.parseLong(p));</b>
-<b class="nc">&nbsp;                    } else if (parameter.getType().isAssignableFrom(Integer.class)) {</b>
-<b class="nc">&nbsp;                        params.add(Integer.parseInt(p));</b>
-<b class="nc">&nbsp;                    } else if (parameter.getType().isAssignableFrom(Short.class)) {</b>
+<b class="fc">&nbsp;                    } else if (parameter.getType().isAssignableFrom(Integer.class)) {</b>
+<b class="fc">&nbsp;                        params.add(Integer.parseInt(p));</b>
+<b class="pc">&nbsp;                    } else if (parameter.getType().isAssignableFrom(Short.class)) {</b>
 <b class="nc">&nbsp;                        params.add(Short.parseShort(p));</b>
 &nbsp;                    } else {
-<b class="nc">&nbsp;                        params.add(p);</b>
+<b class="fc">&nbsp;                        params.add(p);</b>
 &nbsp;                    }
 &nbsp;                } else {
-<b class="nc">&nbsp;                    params.add(null);</b>
+<b class="fc">&nbsp;                    params.add(null);</b>
 &nbsp;                }
 &nbsp;            } else {
 <b class="nc">&nbsp;                params.add(null);</b>
 &nbsp;            }
 &nbsp;        }
-<b class="nc">&nbsp;        return params;</b>
+<b class="fc">&nbsp;        return params;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public String getBasePath() {
-<b class="nc">&nbsp;        return basePath;</b>
+<b class="fc">&nbsp;        return basePath;</b>
 &nbsp;    }
 &nbsp;}
 </code>
@@ -319,7 +319,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-01-12 12:39</div>
+    <div style="float:right;">generated on 2026-01-21 14:32</div>
 </div>
 </body>
 </html>

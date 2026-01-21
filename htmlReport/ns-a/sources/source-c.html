@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > UserService</title>
+  <title>Coverage Report > RatingService</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,14 +22,14 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">at.fhtw.mrp.service</a>
 </div>
 
-<h1>Coverage Summary for Class: UserService (at.fhtw.mrp.service)</h1>
+<h1>Coverage Summary for Class: RatingService (at.fhtw.mrp.service)</h1>
 
 <table class="coverageStats">
 <tr>
   <th class="name">Class</th>
 </tr>
 <tr>
-  <td class="name">UserService</td>
+  <td class="name">RatingService</td>
 </tr>
 
 </table>
@@ -41,22 +41,27 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package at.fhtw.mrp.service;
 &nbsp;
-&nbsp;import at.fhtw.mrp.dao.general.DataConflictException;
-&nbsp;import at.fhtw.mrp.dto.UserAuthDTO;
-&nbsp;import at.fhtw.mrp.dto.UserProfileDTO;
-&nbsp;import at.fhtw.mrp.dto.UserProfileUpdateDTO;
-&nbsp;import at.fhtw.mrp.entity.UserEntity;
+&nbsp;import at.fhtw.mrp.dto.RatingInDTO;
+&nbsp;import at.fhtw.mrp.dto.RatingOutDTO;
 &nbsp;
 &nbsp;import java.util.List;
 &nbsp;
-&nbsp;public interface UserService {
-&nbsp;    void createUser(UserAuthDTO user) throws DataConflictException;
+&nbsp;public interface RatingService {
+&nbsp;    List&lt;RatingOutDTO&gt; getRatingsForUser(Long userId);
 &nbsp;
-&nbsp;    UserProfileDTO getUserProfile(Long userId);
+&nbsp;    RatingOutDTO getRating(Long ratingId);
 &nbsp;
-&nbsp;    void updateUserProfile(Long userId, UserProfileUpdateDTO userProfile);
+&nbsp;    RatingOutDTO createRating(Long mediaId, RatingInDTO rating);
 &nbsp;
-&nbsp;    List&lt;UserEntity&gt; getUsersByRatingCount();
+&nbsp;    void updateRating(Long ratingId, RatingInDTO rating);
+&nbsp;
+&nbsp;    void deleteRating(Long ratingId);
+&nbsp;
+&nbsp;    void likeRating(Long ratingId);
+&nbsp;
+&nbsp;    void unlikeRating(Long ratingId);
+&nbsp;
+&nbsp;    void confirmRating(Long ratingId);
 &nbsp;}
 </code>
 </pre>
@@ -81,7 +86,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-01-12 12:39</div>
+    <div style="float:right;">generated on 2026-01-21 14:32</div>
 </div>
 </body>
 </html>

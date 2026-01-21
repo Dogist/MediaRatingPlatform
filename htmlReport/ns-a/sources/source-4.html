@@ -45,26 +45,26 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">MediaServiceImpl</td>
 <td class="coverageStat">
   <span class="percent">
-    11,8%
+    35,3%
   </span>
   <span class="absValue">
-    (2/17)
+    (6/17)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    18,2%
   </span>
   <span class="absValue">
-    (0/22)
+    (4/22)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    3%
+    30,3%
   </span>
   <span class="absValue">
-    (3/99)
+    (30/99)
   </span>
 </td>
 </tr>
@@ -110,26 +110,26 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name"><strong>Total</strong></td>
 <td class="coverageStat">
   <span class="percent">
-    10,5%
+    31,6%
   </span>
   <span class="absValue">
-    (2/19)
+    (6/19)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    18,2%
   </span>
   <span class="absValue">
-    (0/22)
+    (4/22)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    3%
+    29,7%
   </span>
   <span class="absValue">
-    (3/101)
+    (30/101)
   </span>
 </td>
 </tr>
@@ -177,19 +177,19 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                                                     Integer ageRestriction,
 &nbsp;                                                     Short rating,
 &nbsp;                                                     String sortBy) {
-<b class="nc">&nbsp;        if (sortBy != null &amp;&amp; !Strings.CI.equalsAny(sortBy, &quot;title&quot;, &quot;genre&quot;, &quot;mediaType&quot;, &quot;releaseYear&quot;, &quot;ageRestriction&quot;, &quot;score&quot;)) {</b>
+<b class="pc">&nbsp;        if (sortBy != null &amp;&amp; !Strings.CI.equalsAny(sortBy, &quot;title&quot;, &quot;genre&quot;, &quot;mediaType&quot;, &quot;releaseYear&quot;, &quot;ageRestriction&quot;, &quot;score&quot;)) {</b>
 <b class="nc">&nbsp;            throw new InvalidInputException(&quot;Es kann nicht nach \&quot;&quot; + sortBy + &quot;\&quot; sortiert werden.&quot;);</b>
 &nbsp;        }
 &nbsp;
-<b class="nc">&nbsp;        return mediaEntryDao.searchMediaEntries(title,</b>
+<b class="fc">&nbsp;        return mediaEntryDao.searchMediaEntries(title,</b>
 &nbsp;                        genre,
 &nbsp;                        mediaType,
 &nbsp;                        releaseYear,
 &nbsp;                        ageRestriction,
 &nbsp;                        rating,
-<b class="nc">&nbsp;                        sortBy).stream()</b>
-<b class="nc">&nbsp;                .map(MediaEntryOutDTO::new)</b>
-<b class="nc">&nbsp;                .toList();</b>
+<b class="fc">&nbsp;                        sortBy).stream()</b>
+<b class="fc">&nbsp;                .map(MediaEntryOutDTO::new)</b>
+<b class="fc">&nbsp;                .toList();</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @Override
@@ -208,30 +208,30 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    @Override
 &nbsp;    public MediaEntryOutDTO createMediaEntry(MediaEntryInDTO mediaEntry) {
 &nbsp;
-<b class="nc">&nbsp;        MediaEntryEntity mediaEntryEntity = new MediaEntryEntity(</b>
-<b class="nc">&nbsp;                MediaEntryType.parse(mediaEntry.mediaType()),</b>
-<b class="nc">&nbsp;                mediaEntry.title(), mediaEntry.description(),</b>
-<b class="nc">&nbsp;                mediaEntry.releaseYear(), mediaEntry.genres(),</b>
-<b class="nc">&nbsp;                mediaEntry.ageRestriction(),</b>
-<b class="nc">&nbsp;                UserSessionService.getUserSession());</b>
+<b class="fc">&nbsp;        MediaEntryEntity mediaEntryEntity = new MediaEntryEntity(</b>
+<b class="fc">&nbsp;                MediaEntryType.parse(mediaEntry.mediaType()),</b>
+<b class="fc">&nbsp;                mediaEntry.title(), mediaEntry.description(),</b>
+<b class="fc">&nbsp;                mediaEntry.releaseYear(), mediaEntry.genres(),</b>
+<b class="fc">&nbsp;                mediaEntry.ageRestriction(),</b>
+<b class="fc">&nbsp;                UserSessionService.getUserSession());</b>
 &nbsp;
-<b class="nc">&nbsp;        mediaEntryEntity = mediaEntryDao.createMediaEntry(mediaEntryEntity);</b>
+<b class="fc">&nbsp;        mediaEntryEntity = mediaEntryDao.createMediaEntry(mediaEntryEntity);</b>
 &nbsp;
-<b class="nc">&nbsp;        return new MediaEntryOutDTO(mediaEntryEntity);</b>
+<b class="fc">&nbsp;        return new MediaEntryOutDTO(mediaEntryEntity);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @Override
 &nbsp;    public void updateMediaEntry(Long mediaEntryId, MediaEntryInDTO mediaEntry) {
-<b class="nc">&nbsp;        MediaEntryEntity mediaEntryEntity = getMediaEntryEntityAndValidateUser(mediaEntryId);</b>
+<b class="fc">&nbsp;        MediaEntryEntity mediaEntryEntity = getMediaEntryEntityAndValidateUser(mediaEntryId);</b>
 &nbsp;
-<b class="nc">&nbsp;        mediaEntryEntity.setMediaType(MediaEntryType.parse(mediaEntry.mediaType()));</b>
-<b class="nc">&nbsp;        mediaEntryEntity.setTitle(mediaEntry.title());</b>
-<b class="nc">&nbsp;        mediaEntryEntity.setDescription(mediaEntry.description());</b>
-<b class="nc">&nbsp;        mediaEntryEntity.setReleaseYear(mediaEntry.releaseYear());</b>
-<b class="nc">&nbsp;        mediaEntryEntity.setGenres(mediaEntry.genres());</b>
-<b class="nc">&nbsp;        mediaEntryEntity.setAgeRestriction(mediaEntry.ageRestriction());</b>
+<b class="fc">&nbsp;        mediaEntryEntity.setMediaType(MediaEntryType.parse(mediaEntry.mediaType()));</b>
+<b class="fc">&nbsp;        mediaEntryEntity.setTitle(mediaEntry.title());</b>
+<b class="fc">&nbsp;        mediaEntryEntity.setDescription(mediaEntry.description());</b>
+<b class="fc">&nbsp;        mediaEntryEntity.setReleaseYear(mediaEntry.releaseYear());</b>
+<b class="fc">&nbsp;        mediaEntryEntity.setGenres(mediaEntry.genres());</b>
+<b class="fc">&nbsp;        mediaEntryEntity.setAgeRestriction(mediaEntry.ageRestriction());</b>
 &nbsp;
-<b class="nc">&nbsp;        mediaEntryDao.updateMediaEntry(mediaEntryEntity);</b>
+<b class="fc">&nbsp;        mediaEntryDao.updateMediaEntry(mediaEntryEntity);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @Override
@@ -340,17 +340,17 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    private MediaEntryEntity getMediaEntryEntityAndValidateUser(Long mediaEntryId) {
-<b class="nc">&nbsp;        ValidationUtil.validateEntityId(mediaEntryId, &quot;MediaEntry&quot;);</b>
+<b class="fc">&nbsp;        ValidationUtil.validateEntityId(mediaEntryId, &quot;MediaEntry&quot;);</b>
 &nbsp;
-<b class="nc">&nbsp;        UserEntity currentUser = UserSessionService.getUserSession();</b>
-<b class="nc">&nbsp;        MediaEntryEntity mediaEntryEntity = mediaEntryDao.getMediaEntry(mediaEntryId);</b>
-<b class="nc">&nbsp;        if (mediaEntryEntity == null) {</b>
+<b class="fc">&nbsp;        UserEntity currentUser = UserSessionService.getUserSession();</b>
+<b class="fc">&nbsp;        MediaEntryEntity mediaEntryEntity = mediaEntryDao.getMediaEntry(mediaEntryId);</b>
+<b class="pc">&nbsp;        if (mediaEntryEntity == null) {</b>
 <b class="nc">&nbsp;            throw new NotFoundException(&quot;Dieser MediaEntry existiert nicht.&quot;);</b>
 &nbsp;        }
-<b class="nc">&nbsp;        if (!Objects.equals(mediaEntryEntity.getCreator(), currentUser)) {</b>
+<b class="pc">&nbsp;        if (!Objects.equals(mediaEntryEntity.getCreator(), currentUser)) {</b>
 <b class="nc">&nbsp;            throw new UnauthorizedException(&quot;Der aktuelle Benutzer darf diesen MediaEntry nicht löschen.&quot;);</b>
 &nbsp;        }
-<b class="nc">&nbsp;        return mediaEntryEntity;</b>
+<b class="fc">&nbsp;        return mediaEntryEntity;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;
@@ -383,7 +383,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2026-01-12 12:39</div>
+    <div style="float:right;">generated on 2026-01-21 14:32</div>
 </div>
 </body>
 </html>
